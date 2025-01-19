@@ -63,7 +63,7 @@ export default function Modal2({ isOpen, onClose, content }) {
           description: responseData?.message
         });
       } else if (content.title.toLowerCase().includes('xác minh tài khoản')) {
-        const response = await fetch('/api/newCode', {
+        const response = await fetch('/api/user/newCode', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${document.cookie.split('; ').find(row => row.startsWith('access_token')).split('=')[1]}`,

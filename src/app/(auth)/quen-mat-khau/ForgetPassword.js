@@ -9,21 +9,21 @@ const quenMatKhau = () => {
   const { addToast } = useToast();
   const [email,
     setEmail] = useState('');
-    const [isSubmit,
+  const [isSubmit,
     setIsSubmit] = useState(false);
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
-    const res = await fetch('/api/auth/forget', {
+    const res = await fetch('/api/user/forget', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({email}),
+      body: JSON.stringify({ email }),
     })
     const data = await res.json();
     console.log(data)
-    if(!data.success) return addToast({
+    if (!data.success) return addToast({
       type: 'error',
       title: 'Quên mật khẩu',
       description: data?.message
@@ -31,7 +31,7 @@ const quenMatKhau = () => {
     addToast({
       type: 'success',
       title: 'Quên mật khẩu',
-      description: data?.message
+      description: 'Mã xác nhận đã được gửi đến email của bạn'
     });
     console.log(email)
   };
@@ -43,12 +43,12 @@ const quenMatKhau = () => {
           <label htmlFor='email'>Email</label>
           <input className='w-full p-2 border border-solid border-current rounded' type='email' placeholder='Nhập email' id='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
           {isSubmit && !email && <InfoEmty type='Email' />}
-      </div>
-      <div>
-        <button className='w-full bg-blue-400 py-2 rounded text-white'>Gửi mã</button>
-      </div>
-    </form>
-  </div>
-);
+        </div>
+        <div>
+          <button className='w-full bg-blue-400 py-2 rounded text-white'>Gửi mã</button>
+        </div>
+      </form>
+    </div>
+  );
 }
 export default quenMatKhau;

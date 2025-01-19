@@ -28,7 +28,7 @@ export default function VerifyCodeModal({ isOpen, onClose, userId }) {
 
   const handleVerify = async () => {
     try {
-      const response = await fetch('/api/verifyUser', {
+      const response = await fetch('/api/user/verifyUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
