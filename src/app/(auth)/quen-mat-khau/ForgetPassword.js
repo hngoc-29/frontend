@@ -22,7 +22,6 @@ const quenMatKhau = () => {
       body: JSON.stringify({ email }),
     })
     const data = await res.json();
-    console.log(data)
     if (!data.success) return addToast({
       type: 'error',
       title: 'Quên mật khẩu',
@@ -33,7 +32,6 @@ const quenMatKhau = () => {
       title: 'Quên mật khẩu',
       description: 'Mã xác nhận đã được gửi đến email của bạn'
     });
-    console.log(email)
   };
   return (
     <div className='mx-5'>

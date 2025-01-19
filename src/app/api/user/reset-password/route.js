@@ -3,7 +3,6 @@ import {
 } from 'next/server';
 export async function POST(req) {
   const { token, password } = await req.json();
-  console.log('check pass', password)
   const response = await fetch(`${process.env.URL_BACKEND}/v1/auth/newpass`, {
     method: 'POST',
     headers: {

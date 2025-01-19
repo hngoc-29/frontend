@@ -16,7 +16,7 @@ export async function POST(request) {
   });
 
   if (!response.ok) {
-    const res = await response.json();//console.log(response)
+    const res = await response.json();
     return new Response(JSON.stringify({ error: 'Unable to refresh tokens' }), { status: 403 });
   }
 

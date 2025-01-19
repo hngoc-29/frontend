@@ -31,13 +31,11 @@ export async function POST(req) {
         body: JSON.stringify(bodyData),
       });
     const data = await response.json();
-    console.log(data)
     const res = NextResponse.json(data?.message, {
       status: response.status
     });
     return res;
   } catch (err) {
-    console.log(err)
     return NextResponse.json({
       success: false, message: err
     }, {

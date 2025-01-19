@@ -28,7 +28,7 @@ const Login = () => {
     setUser
   } = useContext(UserContext);
   const router = useRouter();
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
     const bodyData = {
@@ -44,7 +44,6 @@ const Login = () => {
     })
     const data = await response.json();
     if (!response.ok) {
-      console.log(data)
       return addToast({
         type: 'error',
         title: 'Đăng nhập',
@@ -52,12 +51,11 @@ const Login = () => {
       });
     }
     setUser(data);
-    console.log(data)
     addToast({
-        type: 'success',
-        title: 'Đăng nhập',
-        description: 'Đăng nhập thành công'
-      });
+      type: 'success',
+      title: 'Đăng nhập',
+      description: 'Đăng nhập thành công'
+    });
     router.push('/');
   };
   useEffect(() => {
@@ -72,23 +70,23 @@ const Login = () => {
       <form className='space-y-2' onSubmit={handleSubmit}>
         <div>
           <label htmlFor='email'>Email</label>
-          <input className='w-full p-2 border border-solid border-current rounded' type='email' placeholder='Nhập email' id='email' name='email' value={email} onChange={e=>setEmail(e.target.value)} />
-        {isSubmit && !email && <InfoEmty type='Email' />}
-      </div>
-      <div>
-        <label htmlFor='password'>Mật khẩu</label>
-        <input className='w-full p-2 border border-solid border-current rounded' type='email' name='password' type="password" placeholder="Nhập mật khẩu" value={password} onChange={e=>setPassword(e.target.value)} />
-      {isSubmit && !password && <InfoEmty type='Mật khẩu' />}
+          <input className='w-full p-2 border border-solid border-current rounded' type='email' placeholder='Nhập email' id='email' name='email' value={email} onChange={e => setEmail(e.target.value)} />
+          {isSubmit && !email && <InfoEmty type='Email' />}
+        </div>
+        <div>
+          <label htmlFor='password'>Mật khẩu</label>
+          <input className='w-full p-2 border border-solid border-current rounded' type='email' name='password' type="password" placeholder="Nhập mật khẩu" value={password} onChange={e => setPassword(e.target.value)} />
+          {isSubmit && !password && <InfoEmty type='Mật khẩu' />}
+        </div>
+        <div className='text-end'>
+          <Link href='/quen-mat-khau'><span className='underline text-[#f05123]'>Quên mật khẩu?</span></Link>
+          <Link href='/dang-ki'><span className='underline ml-3 text-[#f05123]'>Đăng kí</span></Link>
+        </div>
+        <div>
+          <button className='w-full bg-blue-400 py-2 rounded text-white'>Đăng nhập</button>
+        </div>
+      </form>
     </div>
-    <div className='text-end'>
-      <Link href='/quen-mat-khau'><span className='underline text-[#f05123]'>Quên mật khẩu?</span></Link>
-      <Link href='/dang-ki'><span className='underline ml-3 text-[#f05123]'>Đăng kí</span></Link>
-    </div>
-    <div>
-      <button className='w-full bg-blue-400 py-2 rounded text-white'>Đăng nhập</button>
-    </div>
-  </form>
-</div>
-);
+  );
 }
 export default Login;

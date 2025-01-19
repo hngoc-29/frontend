@@ -23,7 +23,6 @@ export async function POST(req) {
     const responseData = await response.json();
     return NextResponse.json(responseData, { status: 200 });
   } catch (error) {
-    console.error('Error generating new code:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

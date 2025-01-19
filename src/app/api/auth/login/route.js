@@ -30,7 +30,6 @@ export async function POST(req) {
         body: JSON.stringify(bodyData),
       });
     const data = await response.json();
-    //console.log(data)
     if (!data.success) {
       const res = NextResponse.json(data, {
         status: response.status
@@ -55,7 +54,6 @@ export async function POST(req) {
     });
     return res;
   } catch (error) {
-    console.log(error)
     return NextResponse.json({
       success: false, message: error
     }, {
