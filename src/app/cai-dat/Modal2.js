@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../../context/Toast';
 import VerifyCodeModal from '../../components/VerifyCodeModal';
@@ -10,6 +11,7 @@ export default function Modal2({ isOpen, onClose, content }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (content && content.body) {
@@ -31,13 +33,15 @@ export default function Modal2({ isOpen, onClose, content }) {
   };
 
   const handleConfirm = async () => {
+    setIsLoading(true);
     try {
       if (content.title.toLowerCase().includes('mật khẩu')) {
         if (newPassword !== confirmPassword) {
           setError('Mật khẩu mới và xác nhận mật khẩu không khớp');
+          setIsLoading(false);
           return;
         }
-        const response = await fetch('/api/updatePassword', {
+        const response = await fetch('/api/user/updatePassword', {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${document.cookie.split('; ').find(row => row.startsWith('access_token')).split('=')[1]}`,
@@ -99,6 +103,8 @@ export default function Modal2({ isOpen, onClose, content }) {
         description: error.message || 'Có lỗi xảy ra'
       });
       console.error('Error:', error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -108,7 +114,7 @@ export default function Modal2({ isOpen, onClose, content }) {
         <div className="bg-white p-5 rounded-lg shadow-lg w-1/2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">{content?.title}</h2>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center">
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center" disabled={isLoading}>
               <span className="text-2xl">&times;</span>
             </button>
           </div>
@@ -122,6 +128,7 @@ export default function Modal2({ isOpen, onClose, content }) {
                   value={currentPassword}
                   onChange={handlePasswordChange}
                   className="w-full p-2 mb-2 border border-gray-300 rounded-lg"
+                  disabled={isLoading}
                 />
                 <input
                   type="password"
@@ -130,6 +137,7 @@ export default function Modal2({ isOpen, onClose, content }) {
                   value={newPassword}
                   onChange={handlePasswordChange}
                   className="w-full p-2 mb-2 border border-gray-300 rounded-lg"
+                  disabled={isLoading}
                 />
                 <input
                   type="password"
@@ -138,6 +146,7 @@ export default function Modal2({ isOpen, onClose, content }) {
                   value={confirmPassword}
                   onChange={handlePasswordChange}
                   className="w-full p-2 mb-2 border border-gray-300 rounded-lg"
+                  disabled={isLoading}
                 />
                 {error && <p className="text-red-500 text-sm">{error}</p>}
               </>
@@ -148,12 +157,13 @@ export default function Modal2({ isOpen, onClose, content }) {
                 value={email}
                 readOnly
                 className="w-full p-2 mb-2 border border-gray-300 rounded-lg bg-gray-100"
+                disabled={isLoading}
               />
             ) : null}
           </div>
           <div className="flex justify-end">
-            <button onClick={handleConfirm} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-              Xác nhận
+            <button onClick={handleConfirm} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" disabled={isLoading}>
+              {isLoading ? 'Đang xử lý...' : 'Xác nhận'}
             </button>
           </div>
         </div>

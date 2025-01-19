@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useContext } from 'react';
 import { useToast } from '../../context/Toast';
 import { UserContext } from '../../context/UserContext';

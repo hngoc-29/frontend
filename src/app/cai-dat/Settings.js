@@ -20,7 +20,7 @@ export default function Settings() {
   };
   useEffect(() => {
     const isToken = document.cookie.split('; ').find(row => row.startsWith('access_token'));
-    if(!isToken) {
+    if (!isToken) {
       router.push('/dang-nhap');
     }
   })
@@ -78,7 +78,7 @@ export default function Settings() {
               <section
                 id="notifications"
                 className="cursor-pointer mt-4 p-3 border border-gray-300 rounded-lg text-sm leading-tight flex justify-between items-center"
-                onClick={() => handleSectionClick({ id: user._id, title: 'Ảnh đại diện', body: <p>Chọn ảnh đại diện mới</p>, path:'image' })}
+                onClick={() => handleSectionClick({ id: user._id, title: 'Ảnh đại diện', body: <p>Chọn ảnh đại diện mới</p>, path: 'image' })}
               >
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Ảnh đại diện</h2>
@@ -89,7 +89,7 @@ export default function Settings() {
               <section
                 id="account"
                 className="cursor-pointer mt-4 p-3 border border-gray-300 rounded-lg text-sm leading-tight flex justify-between items-center"
-                onClick={() => handleSectionClick({ id: user._id, title: 'Tên', body: <p>{user.fullname}</p>, path:'fullname' })}
+                onClick={() => handleSectionClick({ id: user._id, title: 'Tên', body: <p>{user.fullname}</p>, path: 'fullname' })}
               >
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Tên</h2>
@@ -100,7 +100,7 @@ export default function Settings() {
               <section
                 id="account"
                 className="cursor-pointer mt-4 p-3 border border-gray-300 rounded-lg text-sm leading-tight flex justify-between items-center"
-                onClick={() => handleSectionClick({ id: user._id, title: 'Tài khoản', body: <p>{user.username}</p>, path:'username' })}
+                onClick={() => handleSectionClick({ id: user._id, title: 'Tài khoản', body: <p>{user.username}</p>, path: 'username' })}
               >
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Tài khoản</h2>
@@ -139,7 +139,7 @@ export default function Settings() {
           )}
         </div>
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent}/>
+      <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
       <Modal2 isOpen={isModal2Open} onClose={closeModal2} content={modalContent} />
     </div>
   );

@@ -12,16 +12,16 @@ export async function POST(req) {
         success: false,
         message: 'Email hoặc mật khẩu sai'
       }, {
-      status: 401
-    });
-    return res;
+        status: 401
+      });
+      return res;
     }
     const bodyData = {
       email,
       passIn: password
     }
     const response = await fetch(
-      'http://localhost:8080/v1/auth/login',
+      process.env.URL_BACKEND + '/v1/auth/login',
       {
         method: 'POST',
         headers: {
@@ -31,11 +31,11 @@ export async function POST(req) {
       });
     const data = await response.json();
     //console.log(data)
-    if(!data.success) {
+    if (!data.success) {
       const res = NextResponse.json(data, {
-      status: response.status
-    });
-    return res;
+        status: response.status
+      });
+      return res;
     }
     const {
       access_token,

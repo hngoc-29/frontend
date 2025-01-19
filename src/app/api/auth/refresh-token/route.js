@@ -7,7 +7,7 @@ export async function POST(request) {
     return new Response(JSON.stringify({ error: 'Không có refresh Token' }), { status: 401 });
   }
   // Gửi yêu cầu làm mới token tới API bên ngoài
-  const response = await fetch(`http://localhost:8080/v1/auth/refresh/${request.headers.get('id')}`, {
+  const response = await fetch(`${process.env.URL_BACKEND}/v1/auth/refresh/${request.headers.get('id')}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -23,8 +23,8 @@ export async function POST(request) {
   const newTokens = await response.json();
 
   // Lưu lại các token mới vào cookie
-  cookieStore.set('access_token', newTokens.access_token, { httpOnly: true, path: '/', maxAge: 60*60*24 });
-  cookieStore.set('refresh_token', newTokens.refresh_token, { httpOnly: true, path: '/', maxAge: 7*60*60*24 });
+  cookieStore.set('access_token', newTokens.access_token, { httpOnly: true, path: '/', maxAge: 60 * 60 * 24 });
+  cookieStore.set('refresh_token', newTokens.refresh_token, { httpOnly: true, path: '/', maxAge: 7 * 60 * 60 * 24 });
 
   return new Response(JSON.stringify({ message: 'Refresh thành công' }), { status: 200 });
 }

@@ -5,9 +5,9 @@ export async function PUT(req) {
   const { id, passIn, password } = await req.json();
   const cookieStore = cookies();
   const accessToken = cookieStore.get('access_token')?.value;
-console.log('accessToken:', accessToken, id);
+  console.log('accessToken:', accessToken, id);
   try {
-    const response = await fetch(`http://localhost:8080/v1/user/update-password/${id}`, {
+    const response = await fetch(`${process.env.URL_BACKEND}/v1/user/update-password/${id}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

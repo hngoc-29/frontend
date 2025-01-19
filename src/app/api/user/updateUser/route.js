@@ -9,7 +9,7 @@ export async function PUT(req) {
   const id = formData.get('id');
 
   try {
-    const response = await fetch(`http://localhost:8080/v1/user/update/${id}`, {
+    const response = await fetch(`${process.env.URL_BACKEND}/v1/user/update/${id}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

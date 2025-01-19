@@ -19,7 +19,7 @@ export async function GET(request) {
 
   try {
     // Gọi API bên ngoài để lấy thông tin người dùng
-    const response = await fetch('http://localhost:8080/v1/user/info', {
+    const response = await fetch(`${process.env.URL_BACKEND}/v1/user/info`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

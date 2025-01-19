@@ -7,7 +7,7 @@ export async function POST(req) {
   const accessToken = cookieStore.get('access_token')?.value;
 
   try {
-    const response = await fetch(`http://localhost:8080/v1/auth/verify/${id}`, {
+    const response = await fetch(`${process.env.URL_BACKEND}/v1/auth/verify/${id}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

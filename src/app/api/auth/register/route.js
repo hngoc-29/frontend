@@ -8,12 +8,12 @@ export async function POST(req) {
     email,
     password
   } = await req.json();
-  try{
+  try {
     if (password?.length < 6) {
       const res = NextResponse.json('Mật khẩu phải dài hơn 6 kí tự', {
-      status: 401
-    });
-    return res;
+        status: 401
+      });
+      return res;
     }
     const bodyData = {
       fullname,
@@ -22,7 +22,7 @@ export async function POST(req) {
       password,
     }
     const response = await fetch(
-      'http://localhost:8080/v1/auth/register',
+      `${process.env.URL_BACKEND}/v1/auth/register`,
       {
         method: 'POST',
         headers: {
@@ -30,13 +30,13 @@ export async function POST(req) {
         },
         body: JSON.stringify(bodyData),
       });
-      const data = await response.json();
-      console.log(data)
-      const res = NextResponse.json(data?.message, {
+    const data = await response.json();
+    console.log(data)
+    const res = NextResponse.json(data?.message, {
       status: response.status
     });
     return res;
-  } catch(err) {
+  } catch (err) {
     console.log(err)
     return NextResponse.json({
       success: false, message: err
