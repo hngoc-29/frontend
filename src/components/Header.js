@@ -59,10 +59,10 @@ const Header = () => {
       </div>
       ): (
         <div className='relative'>
-          <img onClick={() => setShowMenu(!showMenu)} src={user.avata} className='h-12 w-12 rounded-[50%]' />
+          <img onClick={() => setShowMenu(!showMenu)} src={user.avata} className='cursor-pointer h-12 w-12 rounded-[50%]' />
         {showMenu && <div className='fixed mt-[2px] right-6 px-5 pt-5 rounded-lg bg-white shadow shadow-[rgba(0,0,0,0.1)]'>
           <div>
-            <div className='flex pr-4'>
+            <div className='flex pr-4 select-none'>
               <img src={user.avata} className='w-14 h-14 rounded-[50%]' />
             <div className='ml-5'>
               <h3 className='font-bold text-lg'>{user.fullname}</h3>

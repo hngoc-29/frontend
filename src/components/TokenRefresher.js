@@ -8,12 +8,16 @@ export default function TokenRefresher() {
 
       if (accessToken) {
         const tokenValue = accessToken.split('=')[1];
-        const tokenExpiry = parseJwt(tokenValue).exp * 1000; // Giả sử token là JWT và có trường `exp`
+        const decodeToken = parseJwt(tokenValue);
+        const tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
         const timeLeft = tokenExpiry - Date.now();
-
         if (timeLeft < 60 * 60 * 1000) {
           await fetch('/api/auth/refresh-token', {
             method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'id': decodeToken._id,
+            },
           });
         }
       }

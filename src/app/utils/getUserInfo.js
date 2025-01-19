@@ -1,8 +1,8 @@
 // utils/getUserInfo.js
 
-export async function getUserInfo(userId) {
+export async function getUserInfo() {
     try {
-        const response = await fetch(`/api/user-info/${userId}`, {
+        const response = await fetch(`/api/user/get-user`, {
             method: 'GET',
         });
 

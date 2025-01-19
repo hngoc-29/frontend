@@ -3,13 +3,11 @@ import { cookies } from 'next/headers';
 export async function POST(request) {
   const cookieStore = await cookies();
   const refreshToken = await cookieStore.get('refresh_token')?.value;
-
   if (!refreshToken) {
     return new Response(JSON.stringify({ error: 'Không có refresh Token' }), { status: 401 });
   }
-
   // Gửi yêu cầu làm mới token tới API bên ngoài
-  const response = await fetch('https://external-api.com/refresh-token', {
+  const response = await fetch(`http://localhost:8080/v1/auth/refresh/${request.headers.get('id')}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -18,6 +16,7 @@ export async function POST(request) {
   });
 
   if (!response.ok) {
+    const res = await response.json();//console.log(response)
     return new Response(JSON.stringify({ error: 'Unable to refresh tokens' }), { status: 403 });
   }
 
