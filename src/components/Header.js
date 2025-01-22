@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef
 } from 'react';
 import {
   UserContext
@@ -20,12 +21,24 @@ const Header = () => {
   const { setLoading } = useContext(loadingContext);
   const [showMenu,
     setShowMenu] = useState(false);
+  const menuRef = useRef(null);
   const element = [
     {
       title: 'Cài đặt',
       path: '/cai-dat'
     },
-  ]
+  ];
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowMenu(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   useEffect(() => {
     const fetchUser = async () => {
       const token = document.cookie;
@@ -42,6 +55,12 @@ const Header = () => {
     }
     fetchUser();
   }, []);
+  if (user.role === 'Admin') {
+    element.push({
+      title: 'Quản lý',
+      path: '/quan-ly'
+    });
+  };
   return (
     <div>
       <header className='fixed top-0 left-0 right-0 h-[60px] shadow-sm flex items-center justify-between px-[20px] z-50 bg-white'>
@@ -56,7 +75,7 @@ const Header = () => {
           </Link>
         </div>
         ) : (
-          <div className='relative'>
+          <div className='relative' ref={menuRef}>
             <img onClick={() => setShowMenu(!showMenu)} src={user.avata} className='cursor-pointer h-12 w-12 rounded-[50%]' />
             {showMenu && <div className='fixed mt-[2px] right-6 px-5 pt-5 rounded-lg bg-white shadow shadow-[rgba(0,0,0,0.1)]'>
               <div>
@@ -68,7 +87,7 @@ const Header = () => {
                   </div>
                 </div>
                 <div className='mt-5'>
-                  <NavMenu element={element} />
+                  <NavMenu element={element} setShowMenu={setShowMenu} />
                 </div>
               </div>
             </div>
