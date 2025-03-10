@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, Button, CircularProgress } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { useToast } from '../../../context/Toast';
@@ -11,10 +11,12 @@ const UserManager = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [totalUsers, setTotalUsers] = useState(0);
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         fetchUsers();
     }, [page, rowsPerPage]);
     const fetchUsers = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`/api/manager/getuser?page=${page + 1}&limit=${rowsPerPage}`);
             const data = await response.json();
@@ -22,10 +24,13 @@ const UserManager = () => {
             setTotalUsers(data.totalUsers);
         } catch (error) {
             console.error('Không thể lấy dữ liệu người dùng', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDeleteUser = async (userId) => {
+        setLoading(true);
         try {
             const response = await fetch(`/api/manager/deleteuser?id=${userId}`, {
                 method: 'DELETE',
@@ -39,6 +44,8 @@ const UserManager = () => {
         } catch (error) {
             console.error('Xóa người dùng thất bại', error);
             addToast({ type: 'error', title: 'Thất bại', description: 'Xóa người dùng thất bại' });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -65,19 +72,27 @@ const UserManager = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {users && users.map((user) => (
-                            <TableRow key={user._id}>
-                                <TableCell>{user._id}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>{user.role}</TableCell>
-                                <TableCell>{user.verify ? <CheckIcon color="success" /> : <CloseIcon color="error" />}</TableCell>
-                                <TableCell>
-                                    <Button variant="contained" color="secondary" onClick={() => handleDeleteUser(user._id)}>
-                                        Xóa
-                                    </Button>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={5} align="center">
+                                    <CircularProgress />
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            users && users.map((user) => (
+                                <TableRow key={user._id}>
+                                    <TableCell>{user._id}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell>{user.role}</TableCell>
+                                    <TableCell>{user.verify ? <CheckIcon color="success" /> : <CloseIcon color="error" />}</TableCell>
+                                    <TableCell>
+                                        <Button variant="contained" color="secondary" onClick={() => handleDeleteUser(user._id)} disabled={loading}>
+                                            Xóa
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>

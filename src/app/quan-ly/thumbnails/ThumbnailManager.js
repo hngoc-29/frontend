@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@mui/material';
 import { useToast } from '../../../context/Toast';
 
 const ThumbnailManager = () => {
@@ -10,22 +10,27 @@ const ThumbnailManager = () => {
     const [thumbnailData, setThumbnailData] = useState({ title: '', image_url: '', description: '' });
     const [editMode, setEditMode] = useState(false);
     const [currentThumbnailId, setCurrentThumbnailId] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchThumbnails();
     }, []);
 
     const fetchThumbnails = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`/api/manager/thumbnails`);
             const data = await response.json();
             setThumbnails(data.thumbnails);
         } catch (error) {
             console.error('Không thể lấy dữ liệu thumbnails', error);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDeleteThumbnail = async (thumbnailId) => {
+        setLoading(true);
         try {
             const response = await fetch(`/api/manager/thumbnails?id=${thumbnailId}`, {
                 method: 'DELETE',
@@ -39,6 +44,8 @@ const ThumbnailManager = () => {
         } catch (error) {
             console.error('Xóa thumbnail thất bại', error);
             addToast({ type: 'error', title: 'Thất bại', description: 'Xóa thumbnail thất bại' });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -127,24 +134,32 @@ const ThumbnailManager = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {thumbnails && thumbnails.map((thumbnail) => (
-                            <TableRow key={thumbnail._id}>
-                                <TableCell>{thumbnail._id}</TableCell>
-                                <TableCell>{thumbnail.title}</TableCell>
-                                <TableCell>
-                                    <img src={thumbnail.image_url || null} alt={thumbnail.title} width="100" />
-                                </TableCell>
-                                <TableCell>{thumbnail.description}</TableCell>
-                                <TableCell>
-                                    <Button variant="contained" color="secondary" onClick={() => handleEditThumbnail(thumbnail)}>
-                                        Sửa
-                                    </Button>
-                                    <Button variant="contained" color="secondary" onClick={() => handleDeleteThumbnail(thumbnail._id)}>
-                                        Xóa
-                                    </Button>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={5} align="center">
+                                    <CircularProgress />
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            thumbnails && thumbnails.map((thumbnail) => (
+                                <TableRow key={thumbnail._id}>
+                                    <TableCell>{thumbnail._id}</TableCell>
+                                    <TableCell>{thumbnail.title}</TableCell>
+                                    <TableCell>
+                                        <img src={thumbnail.image_url || null} alt={thumbnail.title} width="100" />
+                                    </TableCell>
+                                    <TableCell>{thumbnail.description}</TableCell>
+                                    <TableCell>
+                                        <Button variant="contained" color="secondary" onClick={() => handleEditThumbnail(thumbnail)} disabled={loading}>
+                                            Sửa
+                                        </Button>
+                                        <Button variant="contained" color="secondary" onClick={() => handleDeleteThumbnail(thumbnail._id)} disabled={loading}>
+                                            Xóa
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>
