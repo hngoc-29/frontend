@@ -102,9 +102,13 @@ const SingManager = () => {
             formData.append('parent', editMode ? singData.parent : selectedThumbnail);
             if (singData.audio instanceof File) {
                 formData.append('audio', singData.audio);
+            } else if (singData.audio_url) {
+                formData.append('audio_url', singData.audio_url);
             }
             if (singData.image instanceof File) {
                 formData.append('image', singData.image);
+            } else if (singData.image_url) {
+                formData.append('image_url', singData.image_url);
             }
 
             const response = await fetch(url, {
