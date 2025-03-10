@@ -16,9 +16,6 @@ export const metadata = {
   title: {
     default: "App Nghe Nhạc - Trải nghiệm âm nhạc trực tuyến",
     template: "%s | App Nghe Nhạc",
-    verification: {
-      google: "exKzkXXkfCbBRohkUy2ptqVdT9oa8jqNnGSp2cY2m-Y",
-    },
   },
   description:
     "Khám phá kho bài hát phong phú, giao diện hiện đại và các tính năng thông minh. Thưởng thức âm nhạc mọi lúc, mọi nơi cùng App Nghe Nhạc.",
@@ -30,6 +27,9 @@ export const metadata = {
     "audio",
     "âm nhạc trực tuyến",
   ],
+  verification: {
+    google: "exKzkXXkfCbBRohkUy2ptqVdT9oa8jqNnGSp2cY2m-Y", // Đặt đúng vị trí ở đây
+  },
   openGraph: {
     title: "App Nghe Nhạc - Trải nghiệm âm nhạc trực tuyến",
     description:
@@ -38,7 +38,6 @@ export const metadata = {
     siteName: "App Nghe Nhạc",
     images: [
       {
-        // Đây là link trực tiếp đến file ảnh từ Pixabay (đảm bảo định dạng và kích thước phù hợp)
         url: "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
         width: 1200,
         height: 630,
@@ -63,6 +62,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="vi">
+      <head />
       <body className={inter.className}>
         <UserProvider>
           <ToastProvider>
