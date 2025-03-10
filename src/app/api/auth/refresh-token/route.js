@@ -23,8 +23,8 @@ export async function POST(request) {
   const newTokens = await response.json();
 
   // Lưu lại các token mới vào cookie
-  cookieStore.set('access_token', newTokens.access_token, { httpOnly: true, path: '/', maxAge: 60 * 60 * 24 });
-  cookieStore.set('refresh_token', newTokens.refresh_token, { httpOnly: true, path: '/', maxAge: 7 * 60 * 60 * 24 });
+  cookieStore.set('access_token', newTokens.access_token, { httpOnly: false, path: '/', maxAge: 60 * 60 * 24 });
+  cookieStore.set('refresh_token', newTokens.refresh_token, { httpOnly: false, path: '/', maxAge: 7 * 60 * 60 * 24 });
 
-  return new Response(JSON.stringify({ message: 'Refresh thành công' }), { status: 200 });
+  return new Response(JSON.stringify({ message: 'Refresh thành công', access_token: newTokens.access_token, refresh_token: newTokens.refresh_token }), { status: 200 });
 }

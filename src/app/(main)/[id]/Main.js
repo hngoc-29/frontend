@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
     PlayArrow,
     Pause,
@@ -13,22 +15,28 @@ import {
 import { useToast } from "../../../context/Toast";
 
 const Main = ({ id }) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { addToast } = useToast();
+
+    // State khởi tạo danh sách bài hát và chỉ số bài hiện tại (lấy từ query 'sing' nếu có)
     const [sings, setSings] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(searchParams.get("sing") || 0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isRandom, setIsRandom] = useState(false);
     const [isRepeat, setIsRepeat] = useState(false);
+
+    // Các ref dùng để truy cập DOM và lưu trạng thái
     const isFirstLoad = useRef(true);
     const audioRef = useRef(null);
     const progressRef = useRef(null);
     const playlistRef = useRef(null);
     const cdRef = useRef(null);
     const initialCDWidth = useRef(150);
-    const { addToast } = useToast();
     const playedIndices = useRef([]);
 
+    // Ẩn thanh cuộn và bottom navigation khi component mount
     useEffect(() => {
-        // Ẩn thanh cuộn và bottom navigation
         document.body.style.overflow = "hidden";
         const bottomNav = document.querySelector(".bottom-nav");
         if (bottomNav) {
@@ -42,10 +50,11 @@ const Main = ({ id }) => {
         };
     }, []);
 
+    // Khi danh sách bài hát hoặc chỉ số bài thay đổi, load bài và cuộn đến bài đó
     useEffect(() => {
         if (sings.length > 0) {
             if (isFirstLoad.current) {
-                loadCurrentSong(true); // First load
+                loadCurrentSong(true); // Load lần đầu, không tự động phát
                 isFirstLoad.current = false;
             } else {
                 loadCurrentSong();
@@ -54,113 +63,31 @@ const Main = ({ id }) => {
         }
     }, [sings, currentIndex]);
 
-    // Lấy dữ liệu bài hát
+    // Lấy dữ liệu bài hát (ở đây sử dụng dữ liệu mẫu)
     useEffect(() => {
         if (!id) return;
         const fetchThumbnails = async () => {
-            /*const res = await fetch(`/api/manager/sings?parent=${id}`);
-            const data = await res.json();
-            if (!data.success) {
-                return addToast({
+            try {
+                const response = await fetch(`/api/manager/sings?parent=${id}`);
+                if (!response.ok) {
+                    throw new Error("Fetch Error");
+                }
+                const data = await response.json();
+                setSings(data.Sings);
+            } catch (error) {
+                addToast({
                     type: "error",
-                    title: "Sings",
-                    description: data.error?.message || "Có lỗi xảy ra",
+                    title: "Fetch Error",
+                    description: "Không thể lấy dữ liệu bài hát. Vui lòng thử lại.",
                 });
-            }*/
-            setSings([
-                //...data.Sings,
-                {
-                    _id: "67cd790bf7104024584b4df0",
-                    singname: "na",
-                    author: "au",
-                    image_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/images%2F1741519113464-z6337101665245_877677cce500e5b6f4a8010e4750a4b3.jpg?alt=media&token=cd2a2e44-c1ee-4cf2-a69f-2f2fe52ac6b3",
-                    audio_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/audio%2F1741519110152-0VVjyDAHz0KcvSQFQeZzq5iQCpWfvShW.mp3?alt=media&token=16486229-b790-46d8-9da8-b71031138213",
-                    parent: "673b3dadb5cb13176c5f908e",
-                    sing_path: "na",
-                    createdAt: "2025-03-09T11:18:35.412Z",
-                    updatedAt: "2025-03-09T11:18:35.412Z",
-                    __v: 0,
-                },
-                {
-                    _id: "67cd790bf7104024584b4df0",
-                    singname: "na",
-                    author: "au",
-                    image_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/images%2F1741519113464-z6337101665245_877677cce500e5b6f4a8010e4750a4b3.jpg?alt=media&token=cd2a2e44-c1ee-4cf2-a69f-2f2fe52ac6b3",
-                    audio_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/audio%2F1741519110152-0VVjyDAHz0KcvSQFQeZzq5iQCpWfvShW.mp3?alt=media&token=16486229-b790-46d8-9da8-b71031138213",
-                    parent: "673b3dadb5cb13176c5f908e",
-                    sing_path: "na",
-                    createdAt: "2025-03-09T11:18:35.412Z",
-                    updatedAt: "2025-03-09T11:18:35.412Z",
-                    __v: 0,
-                },
-                {
-                    _id: "67cd790bf7104024584b4df0",
-                    singname: "na",
-                    author: "au",
-                    image_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/images%2F1741519113464-z6337101665245_877677cce500e5b6f4a8010e4750a4b3.jpg?alt=media&token=cd2a2e44-c1ee-4cf2-a69f-2f2fe52ac6b3",
-                    audio_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/audio%2F1741519110152-0VVjyDAHz0KcvSQFQeZzq5iQCpWfvShW.mp3?alt=media&token=16486229-b790-46d8-9da8-b71031138213",
-                    parent: "673b3dadb5cb13176c5f908e",
-                    sing_path: "na",
-                    createdAt: "2025-03-09T11:18:35.412Z",
-                    updatedAt: "2025-03-09T11:18:35.412Z",
-                    __v: 0,
-                },
-                {
-                    _id: "67cd790bf7104024584b4df0",
-                    singname: "na",
-                    author: "au",
-                    image_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/images%2F1741519113464-z6337101665245_877677cce500e5b6f4a8010e4750a4b3.jpg?alt=media&token=cd2a2e44-c1ee-4cf2-a69f-2f2fe52ac6b3",
-                    audio_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/audio%2F1741519110152-0VVjyDAHz0KcvSQFQeZzq5iQCpWfvShW.mp3?alt=media&token=16486229-b790-46d8-9da8-b71031138213",
-                    parent: "673b3dadb5cb13176c5f908e",
-                    sing_path: "na",
-                    createdAt: "2025-03-09T11:18:35.412Z",
-                    updatedAt: "2025-03-09T11:18:35.412Z",
-                    __v: 0,
-                },
-                {
-                    _id: "67cd790bf7104024584b4df0",
-                    singname: "na",
-                    author: "au",
-                    image_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/images%2F1741519113464-z6337101665245_877677cce500e5b6f4a8010e4750a4b3.jpg?alt=media&token=cd2a2e44-c1ee-4cf2-a69f-2f2fe52ac6b3",
-                    audio_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/audio%2F1741519110152-0VVjyDAHz0KcvSQFQeZzq5iQCpWfvShW.mp3?alt=media&token=16486229-b790-46d8-9da8-b71031138213",
-                    parent: "673b3dadb5cb13176c5f908e",
-                    sing_path: "na",
-                    createdAt: "2025-03-09T11:18:35.412Z",
-                    updatedAt: "2025-03-09T11:18:35.412Z",
-                    __v: 0,
-                },
-                {
-                    _id: "67cd790bf7104024584b4df0",
-                    singname: "na",
-                    author: "au",
-                    image_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/images%2F1741519113464-z6337101665245_877677cce500e5b6f4a8010e4750a4b3.jpg?alt=media&token=cd2a2e44-c1ee-4cf2-a69f-2f2fe52ac6b3",
-                    audio_url:
-                        "https://firebasestorage.googleapis.com/v0/b/hngoc-webdite.appspot.com/o/audio%2F1741519110152-0VVjyDAHz0KcvSQFQeZzq5iQCpWfvShW.mp3?alt=media&token=16486229-b790-46d8-9da8-b71031138213",
-                    parent: "673b3dadb5cb13176c5f908e",
-                    sing_path: "na",
-                    createdAt: "2025-03-09T11:18:35.412Z",
-                    updatedAt: "2025-03-09T11:18:35.412Z",
-                    __v: 0,
-                },
-            ]);
+            }
         };
         fetchThumbnails();
     }, [id]);
 
+    // Load cấu hình player từ localStorage khi component mount
     useEffect(() => {
-        // Load config from localStorage
-        const savedConfig = JSON.parse(localStorage.getItem('playerConfig'));
+        const savedConfig = JSON.parse(localStorage.getItem("playerConfig"));
         if (savedConfig) {
             setCurrentIndex(savedConfig.currentIndex || 0);
             setIsRandom(savedConfig.isRandom || false);
@@ -168,21 +95,17 @@ const Main = ({ id }) => {
         }
     }, []);
 
+    // Lưu cấu hình player vào localStorage mỗi khi các trạng thái thay đổi
     useEffect(() => {
-        // Save config to localStorage
-        const config = {
-            currentIndex,
-            isRandom,
-            isRepeat,
-        };
-        localStorage.setItem('playerConfig', JSON.stringify(config));
+        const config = { currentIndex, isRandom, isRepeat };
+        localStorage.setItem("playerConfig", JSON.stringify(config));
     }, [currentIndex, isRandom, isRepeat]);
 
-    // Hàm helper lấy chỉ số random khác với bài hiện tại
+    // Hàm helper để lấy chỉ số bài hát ngẫu nhiên không trùng với bài hiện tại
     const getRandomIndex = (currentIdx, length) => {
         if (length === 0) return 0;
         if (playedIndices.current.length === length) {
-            playedIndices.current = []; // Reset when all songs have been played
+            playedIndices.current = []; // Reset khi tất cả bài đã được phát
         }
         let newIndex;
         do {
@@ -200,17 +123,17 @@ const Main = ({ id }) => {
         const newWidth = Math.max(initialCDWidth.current - scrollTop, 0);
         cdElement.style.width = `${newWidth}px`;
         cdElement.style.opacity = newWidth / initialCDWidth.current;
-        cdElement.style.zIndex = newWidth > 0 ? 10 : -1; // Ensure CD stays on top
-        playlistEl.style.marginTop = `${newWidth + 170}px`; // Adjust margin-top based on CD width
-        playlistEl.style.height = `calc(100vh - ${newWidth + 230}px)`; // Adjust height based on CD width
+        cdElement.style.zIndex = newWidth > 0 ? 10 : -1;
+        playlistEl.style.marginTop = `${newWidth + 170}px`;
+        playlistEl.style.height = `calc(100vh - ${newWidth + 230}px)`;
     };
 
+    // Hàm load bài hát hiện tại, nếu isFirst=true thì không tự động phát
     const loadCurrentSong = (isFirst = false) => {
         if (audioRef.current && sings[currentIndex]) {
             const audioUrl = sings[currentIndex].audio_url;
             audioRef.current.src = audioUrl;
             audioRef.current.load();
-            // Reset currentTime của audio
             audioRef.current.currentTime = 0;
             if (!isFirst) {
                 audioRef.current.play();
@@ -218,6 +141,8 @@ const Main = ({ id }) => {
             } else {
                 setIsPlaying(false);
             }
+            // Cập nhật query vào URL (shallow routing để không reload trang)
+            router.push(`${id}?sing=${currentIndex}`, undefined, { shallow: true });
             if (progressRef.current) {
                 progressRef.current.value = 0;
                 progressRef.current.style.background = `linear-gradient(to right, #EC1F55 0%, #d3d3d3 0%)`;
@@ -225,6 +150,7 @@ const Main = ({ id }) => {
         }
     };
 
+    // Xử lý phát/tạm dừng audio, thêm toast khi không thể phát
     const handlePlayPause = () => {
         if (!audioRef.current) return;
         if (isPlaying) {
@@ -232,42 +158,48 @@ const Main = ({ id }) => {
         } else {
             const playPromise = audioRef.current.play();
             if (playPromise !== undefined) {
-                playPromise
-                    .then(() => setIsPlaying(true))
-                    .catch((error) => {
-                        console.error("Error playing audio:", error);
-                        addToast({
-                            type: "error",
-                            title: "Audio Error",
-                            description: "Không thể phát audio. Vui lòng thử lại.",
-                        });
+                playPromise.catch((error) => {
+                    // Thông báo lỗi bằng toast thay vì console.error
+                    addToast({
+                        type: "error",
+                        title: "Audio Error",
+                        description: "Không thể phát audio. Vui lòng thử lại.",
                     });
+                });
             }
         }
     };
 
-    // Tối ưu hàm next sử dụng useCallback và getRandomIndex
+    // Hàm chuyển bài tiếp theo, sử dụng useCallback để tối ưu
     const handleNext = useCallback(() => {
-        const nextButton = document.querySelector('.next-button');
-        nextButton.classList.add('text-red-500');
-        setTimeout(() => nextButton.classList.remove('text-red-500'), 500);
-
+        // Hiệu ứng nhấn nút next (có thể thay đổi màu sắc tạm thời)
+        const nextButton = document.querySelector(".next-button");
+        if (nextButton) {
+            nextButton.classList.add("text-red-500");
+            setTimeout(() => nextButton.classList.remove("text-red-500"), 200);
+        }
         setCurrentIndex((prevIndex) => {
-            const nextIndex = isRandom ? getRandomIndex(prevIndex, sings.length) : (prevIndex + 1) % sings.length;
-            if (!isRandom) playedIndices.current = []; // Clear played indices if not in random mode
+            const nextIndex = isRandom
+                ? getRandomIndex(prevIndex, sings.length)
+                : (prevIndex + 1) % sings.length;
+            if (!isRandom) playedIndices.current = []; // Reset played indices khi không random
             return nextIndex;
         });
     }, [isRandom, sings.length]);
 
+    // Hàm chuyển bài trước đó
     const handlePrev = () => {
-        const prevButton = document.querySelector('.prev-button');
-        prevButton.classList.add('text-red-500');
-        setTimeout(() => prevButton.classList.remove('text-red-500'), 500);
-
+        const prevButton = document.querySelector(".prev-button");
+        if (prevButton) {
+            prevButton.classList.add("text-red-500");
+            setTimeout(() => prevButton.classList.remove("text-red-500"), 200);
+        }
         setCurrentIndex((prev) => {
-            const prevIndex = isRandom ? getRandomIndex(prev, sings.length) : (prev - 1 + sings.length) % sings.length;
-            if (!isRandom) playedIndices.current = []; // Clear played indices if not in random mode
-            return prev;
+            const prevIndex = isRandom
+                ? getRandomIndex(prev, sings.length)
+                : (prev - 1 + sings.length) % sings.length;
+            if (!isRandom) playedIndices.current = [];
+            return prevIndex;
         });
     };
 
@@ -276,6 +208,8 @@ const Main = ({ id }) => {
 
     const onAudioPlay = () => setIsPlaying(true);
     const onAudioPause = () => setIsPlaying(false);
+
+    // Khi audio kết thúc, nếu chế độ repeat bật thì phát lại, ngược lại chuyển bài tiếp theo
     const onAudioEnded = () => {
         if (isRepeat) {
             audioRef.current.play();
@@ -284,6 +218,7 @@ const Main = ({ id }) => {
         }
     };
 
+    // Cập nhật thanh tiến độ khi audio chạy
     const onTimeUpdate = () => {
         if (audioRef.current && progressRef.current) {
             const progressPercent = Math.floor(
@@ -294,6 +229,7 @@ const Main = ({ id }) => {
         }
     };
 
+    // Xử lý thay đổi thanh tiến độ khi người dùng kéo
     const onProgressChange = (e) => {
         if (audioRef.current) {
             const seekTime = (audioRef.current.duration / 100) * e.target.value;
@@ -301,10 +237,12 @@ const Main = ({ id }) => {
         }
     };
 
+    // Khi người dùng click vào bài hát trong playlist
     const handleSongClick = (index) => {
         setCurrentIndex(index);
     };
 
+    // Hàm cuộn mượt tới bài hát hiện tại trong playlist
     const smoothScrollTo = (element, target, duration = 500) => {
         const start = element.scrollTop;
         const change = target - start;
@@ -314,9 +252,8 @@ const Main = ({ id }) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             // Hàm easing kiểu easeInOutQuad
-            const ease = progress < 0.5
-                ? 2 * progress * progress
-                : -1 + (4 - 2 * progress) * progress;
+            const ease =
+                progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
             element.scrollTop = start + change * ease;
             if (elapsed < duration) {
                 requestAnimationFrame(animateScroll);
@@ -345,7 +282,9 @@ const Main = ({ id }) => {
             <div className="fixed top-[60px] w-full max-w-[480px] bg-white border-b border-gray-200 p-2 z-20">
                 <header className="text-center mb-2">
                     <h4 className="text-sm text-[#EC1F55]">Now playing:</h4>
-                    <h2 className="font-bold text-xl">{sings[currentIndex]?.singname || `String 57th & 9th`}</h2>
+                    <h2 className="font-bold text-xl">
+                        {sings[currentIndex]?.singname || "Default Song"}
+                    </h2>
                 </header>
                 {/* CD */}
                 <div ref={cdRef} className="mx-auto w-[150px]">
@@ -353,14 +292,14 @@ const Main = ({ id }) => {
                         className="w-full aspect-square rounded-full bg-cover bg-[#333] mx-auto"
                         style={{
                             backgroundImage: `url(${sings[currentIndex]?.image_url})`,
-                            animation: isPlaying ? 'spin 5s linear infinite' : 'none',
+                            animation: isPlaying ? "spin 5s linear infinite" : "none",
                         }}
                     ></div>
                 </div>
                 {/* Control */}
                 <div className="flex justify-around items-center py-2">
                     <button className="text-gray-600 p-4" onClick={toggleRepeat}>
-                        <Repeat fontSize="medium" className={`${isRepeat ? 'text-red-500' : ''}`} />
+                        <Repeat fontSize="medium" className={`${isRepeat ? "text-red-500" : ""}`} />
                     </button>
                     <button className="text-gray-600 p-4 prev-button" onClick={handlePrev}>
                         <SkipPrevious fontSize="medium" />
@@ -379,7 +318,7 @@ const Main = ({ id }) => {
                         <SkipNext fontSize="medium" />
                     </button>
                     <button className="text-gray-600 p-4" onClick={toggleRandom}>
-                        <Shuffle fontSize="medium" className={`${isRandom ? 'text-red-500' : ''}`} />
+                        <Shuffle fontSize="medium" className={`${isRandom ? "text-red-500" : ""}`} />
                     </button>
                 </div>
                 {/* Progress */}
@@ -406,12 +345,13 @@ const Main = ({ id }) => {
                 ref={playlistRef}
                 onScroll={handleScroll}
                 className="p-3 overflow-auto scroll-smooth"
-                style={{ marginTop: '320px', height: 'calc(100vh - 360px)' }}
+                style={{ marginTop: "320px", height: "calc(100vh - 360px)" }}
             >
                 {sings.map((sing, index) => (
                     <div
                         key={sing._id + index}
-                        className={`flex items-center p-4 mb-3 rounded-lg shadow cursor-pointer ${index === currentIndex ? "bg-[#EC1F55] text-white" : "bg-white"}`}
+                        className={`flex items-center p-4 mb-3 rounded-lg shadow cursor-pointer ${index === currentIndex ? "bg-[#EC1F55] text-white" : "bg-white"
+                            }`}
                         onClick={() => handleSongClick(index)}
                     >
                         <div

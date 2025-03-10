@@ -4,26 +4,32 @@ import { useEffect } from 'react';
 export default function TokenRefresher() {
   useEffect(() => {
     const checkToken = async () => {
-      const accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
+      let accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
 
       if (accessToken) {
-        const tokenValue = accessToken.split('=')[1];
-        const decodeToken = parseJwt(tokenValue);
-        const tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
-        const timeLeft = tokenExpiry - Date.now();
+        let tokenValue = accessToken.split('=')[1];
+        let decodeToken = parseJwt(tokenValue);
+        let tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
+        let timeLeft = tokenExpiry - Date.now();
         if (timeLeft < 60 * 60 * 1000) {
-          await fetch('/api/auth/refresh-token', {
+          const response = await fetch('/api/auth/refresh-token', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'id': decodeToken._id,
             },
           });
+          if (response.ok) {
+            const data = await response.json();
+            document.cookie = `access_token=${data.access_token}; path=/;`;
+            document.cookie = `refresh_token=${data.refresh_token}; path=/;`;
+            accessToken = `access_token=${data.access_token}`;
+          }
         }
       }
     };
 
-    const intervalId = setInterval(checkToken, 15 * 60 * 1000); // Kiểm tra mỗi 15 phút
+    const intervalId = setInterval(() => checkToken(), 30 * 60 * 1000); // Kiểm tra mỗi 30 m
     return () => clearInterval(intervalId);
   }, []);
 
