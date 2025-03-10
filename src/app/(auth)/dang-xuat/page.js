@@ -5,11 +5,18 @@ export const metadata = {
 };
 
 const DangXuat = async () => {
-
-  const response = await fetch('/api/auth/logout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  try {
+    const response = await fetch(baseUrl + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
   return (
     <></>
   )

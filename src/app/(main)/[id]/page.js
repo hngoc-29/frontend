@@ -56,7 +56,7 @@ export async function generateMetadata({ params, searchParams }) {
                     {
                         url: song
                             ? song.image_url
-                            : "https://your-default-image-url.com/default.jpg",
+                            : "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
                         width: 1200,
                         height: 630,
                         alt: song ? song.singname : "Default Song",
@@ -76,7 +76,26 @@ export async function generateMetadata({ params, searchParams }) {
                 images: [
                     song
                         ? song.image_url
-                        : "https://your-default-image-url.com/default.jpg",
+                        : "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
+                ],
+            },
+            facebook: {
+                app_id: "music_app_id",
+                title: song
+                    ? `${song.singname} - ${song.author}`
+                    : "Main Page",
+                description: song
+                    ? `Nghe bài hát ${song.singname} của ${song.author}`
+                    : "Trang chính của ứng dụng của bạn",
+                images: [
+                    {
+                        url: song
+                            ? song.image_url
+                            : "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
+                        width: 1200,
+                        height: 630,
+                        alt: song ? song.singname : "Default Song",
+                    },
                 ],
             },
             // Xác định URL cơ sở cho các đường dẫn tương đối trong metadata
