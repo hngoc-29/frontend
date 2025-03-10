@@ -61,6 +61,27 @@ const Main = ({ id }) => {
             }
             scrollToCurrentSong(currentIndex);
         }
+        if ('mediaSession' in navigator) {
+            const artworkUrl = sings[currentIndex]?.image_url || 'fallback-image-url.png';
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: sings[currentIndex]?.singname || "Default Song",
+                artist: sings[currentIndex]?.author || "Unknown Artist",
+                album: "Album Name",
+                artwork: [
+                    { src: artworkUrl, sizes: '96x96', type: 'image/png' },
+                    { src: artworkUrl, sizes: '128x128', type: 'image/png' },
+                    { src: artworkUrl, sizes: '192x192', type: 'image/png' },
+                    { src: artworkUrl, sizes: '256x256', type: 'image/png' },
+                    { src: artworkUrl, sizes: '384x384', type: 'image/png' },
+                    { src: artworkUrl, sizes: '512x512', type: 'image/png' },
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', handlePlayPause);
+            navigator.mediaSession.setActionHandler('pause', handlePlayPause);
+            navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
+            navigator.mediaSession.setActionHandler('nexttrack', handleNext);
+        }
     }, [sings, currentIndex]);
 
     // Lấy dữ liệu bài hát (ở đây sử dụng dữ liệu mẫu)
@@ -69,16 +90,16 @@ const Main = ({ id }) => {
         const fetchThumbnails = async () => {
             try {
                 const response = await fetch(`/api/manager/sings?parent=${id}`);
-                if (!response.ok) {
-                    throw new Error("Fetch Error");
-                }
                 const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || "Fetch Error");
+                }
                 setSings(data.Sings);
             } catch (error) {
                 addToast({
                     type: "error",
                     title: "Fetch Error",
-                    description: "Không thể lấy dữ liệu bài hát. Vui lòng thử lại.",
+                    description: error.message,
                 });
             }
         };
@@ -155,17 +176,22 @@ const Main = ({ id }) => {
         if (!audioRef.current) return;
         if (isPlaying) {
             audioRef.current.pause();
+            setIsPlaying(false);
         } else {
             const playPromise = audioRef.current.play();
             if (playPromise !== undefined) {
-                playPromise.catch((error) => {
-                    // Thông báo lỗi bằng toast thay vì console.error
-                    addToast({
-                        type: "error",
-                        title: "Audio Error",
-                        description: "Không thể phát audio. Vui lòng thử lại.",
+                playPromise
+                    .then(() => {
+                        setIsPlaying(true);
+                    })
+                    .catch((error) => {
+                        // Thông báo lỗi bằng toast thay vì console.error
+                        addToast({
+                            type: "error",
+                            title: "Audio Error",
+                            description: "Không thể phát audio. Vui lòng thử lại.",
+                        });
                     });
-                });
             }
         }
     };

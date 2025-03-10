@@ -1,5 +1,11 @@
+// Add metadata
+export const metadata = {
+  title: 'Thông Tin',
+  description: 'Trang thông tin của ứng dụng của bạn',
+};
+
 const InfoMe = () => {
-  return(
+  return (
     <div className='px-8'>
       <h1 className='text-center text-3xl font-bold mt-5'>Thông tin</h1>
       <div className='mt-2'>

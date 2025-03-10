@@ -1,5 +1,11 @@
 import ThumbnailManager from './ThumbnailManager';
 
+// Add metadata
+export const metadata = {
+    title: 'Quản Lý Thumbnail',
+    description: 'Trang quản lý thumbnail cho ứng dụng của bạn',
+};
+
 export default function UsersPage() {
     return (
         <div className="p-5 bg-gray-100 font-sans">

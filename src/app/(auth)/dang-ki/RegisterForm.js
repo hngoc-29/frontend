@@ -80,7 +80,7 @@ const RegisterForm = () => {
         </div>
         <div>
           <label htmlFor='password'>Mật khẩu</label>
-          <input className='w-full p-2 border border-solid border-current rounded' type='email' name='password' type="password" placeholder="Nhập mật khẩu" name='password' onChange={e => setPassword(e.target.value)} value={password} />
+          <input className='w-full p-2 border border-solid border-current rounded' name='password' type="password" placeholder="Nhập mật khẩu" onChange={e => setPassword(e.target.value)} value={password} />
           {isSubmit && !password && <InfoEmty type='Mật khẩu' />}
         </div>
         <div className='text-end'>

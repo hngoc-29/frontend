@@ -1,3 +1,8 @@
+// Add metadata
+export const metadata = {
+  title: 'Đăng Xuất',
+  description: 'Trang đăng xuất cho ứng dụng của bạn',
+};
 
 const DangXuat = async () => {
 

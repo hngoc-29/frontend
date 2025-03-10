@@ -75,7 +75,7 @@ const Login = () => {
         </div>
         <div>
           <label htmlFor='password'>Mật khẩu</label>
-          <input className='w-full p-2 border border-solid border-current rounded' type='email' name='password' type="password" placeholder="Nhập mật khẩu" value={password} onChange={e => setPassword(e.target.value)} />
+          <input className='w-full p-2 border border-solid border-current rounded' name='password' type="password" placeholder="Nhập mật khẩu" value={password} onChange={e => setPassword(e.target.value)} />
           {isSubmit && !password && <InfoEmty type='Mật khẩu' />}
         </div>
         <div className='text-end'>

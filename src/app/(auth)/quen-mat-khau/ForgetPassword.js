@@ -4,7 +4,7 @@ import {
 } from 'react';
 import InfoEmty from '../../../components/ui/InfoEmty';
 import { useToast } from '../../../context/Toast';
-const quenMatKhau = () => {
+const QuenMatKhau = () => {
   const { addToast } = useToast();
   const [email,
     setEmail] = useState('');
@@ -48,4 +48,4 @@ const quenMatKhau = () => {
     </div>
   );
 }
-export default quenMatKhau;
+export default QuenMatKhau;
