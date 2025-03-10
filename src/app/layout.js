@@ -16,6 +16,9 @@ export const metadata = {
   title: {
     default: "App Nghe Nhạc - Trải nghiệm âm nhạc trực tuyến",
     template: "%s | App Nghe Nhạc",
+    verification: {
+      google: "exKzkXXkfCbBRohkUy2ptqVdT9oa8jqNnGSp2cY2m-Y",
+    },
   },
   description:
     "Khám phá kho bài hát phong phú, giao diện hiện đại và các tính năng thông minh. Thưởng thức âm nhạc mọi lúc, mọi nơi cùng App Nghe Nhạc.",
