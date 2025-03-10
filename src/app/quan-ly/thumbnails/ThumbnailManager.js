@@ -59,8 +59,10 @@ const ThumbnailManager = () => {
     };
 
     const handleFileChange = (e) => {
-        const { name, files } = e.target;
-        setThumbnailData({ ...thumbnailData, [name]: files[0] });
+        const file = e.target.files[0]; // Lấy file từ input
+        if (file) {
+            setThumbnailData({ ...thumbnailData, image_url: file }); // Lưu file thay vì đường dẫn
+        }
     };
 
     const handleSubmit = async () => {
@@ -70,9 +72,11 @@ const ThumbnailManager = () => {
             const formData = new FormData();
             formData.append('title', thumbnailData.title);
             formData.append('description', thumbnailData.description);
+
+            // Nếu người dùng tải lên file, gửi file thay vì đường dẫn URL
             if (thumbnailData.image_url instanceof File) {
                 formData.append('image', thumbnailData.image_url);
-            } else {
+            } else if (thumbnailData.image_url) {
                 formData.append('image_url', thumbnailData.image_url);
             }
 
@@ -80,6 +84,7 @@ const ThumbnailManager = () => {
                 method,
                 body: formData,
             });
+
             if (response.ok) {
                 addToast({ type: 'success', title: 'Thành công', description: editMode ? 'Cập nhật thumbnail thành công' : 'Tạo thumbnail thành công' });
                 fetchThumbnails();
@@ -92,6 +97,7 @@ const ThumbnailManager = () => {
             addToast({ type: 'error', title: 'Thất bại', description: editMode ? 'Cập nhật thumbnail thất bại' : 'Tạo thumbnail thất bại' });
         }
     };
+
 
     const handleEditThumbnail = (thumbnail) => {
         setThumbnailData({
