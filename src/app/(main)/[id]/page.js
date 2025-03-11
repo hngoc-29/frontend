@@ -14,8 +14,8 @@ export async function generateMetadata({ params, searchParams }) {
     }
 
     // Lấy base URL từ biến môi trường, nếu không có thì dùng localhost
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
+    const baseUrl = process.env.BASE_URL || "https://frontend-hngoc-29s-projects.vercel.app";
+    console.log(baseUrl);
     try {
         // Lấy cookie hiện tại từ request
         const cookieHeader = (await cookies()).toString();

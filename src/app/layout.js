@@ -9,6 +9,7 @@ import { LoadingProvider } from '../context/Loading';
 import { UserProvider } from '../context/UserContext';
 import { ThumbnailProvider } from '../context/Thumbnails';
 import { ToastProvider } from '../context/Toast';
+import StartServer from '../components/StartServer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -64,10 +65,12 @@ export default function RootLayout({ children }) {
     <html lang="vi">
       <head />
       <body className={inter.className}>
+
         <UserProvider>
           <ToastProvider>
             <LoadingProvider>
               <Loading />
+              <StartServer />
               <Header />
               <TokenRefresher />
               <div className='py-[60px]'>

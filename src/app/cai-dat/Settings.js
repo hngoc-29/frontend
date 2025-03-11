@@ -15,6 +15,7 @@ export default function Settings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [modalContent, setModalContent] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const handleLinkClick = (link) => {
     setActiveLink(link);
   };
@@ -26,11 +27,13 @@ export default function Settings() {
   })
   const handleSectionClick = (content, isSecurity = false) => {
     setModalContent(content);
+    setIsLoading(true);
     if (isSecurity) {
       setIsModal2Open(true);
     } else {
       setIsModalOpen(true);
     }
+    setIsLoading(false);
   };
 
   const closeModal = () => {
@@ -139,8 +142,8 @@ export default function Settings() {
           )}
         </div>
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
-      <Modal2 isOpen={isModal2Open} onClose={closeModal2} content={modalContent} />
+      <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} isLoading={isLoading} />
+      <Modal2 isOpen={isModal2Open} onClose={closeModal2} content={modalContent} isLoading={isLoading} />
     </div>
   );
 }
