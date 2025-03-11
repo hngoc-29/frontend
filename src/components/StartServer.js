@@ -10,7 +10,8 @@ const StartServer = () => {
 
     useEffect(() => {
         const handleStartServer = async () => {
-            setLoading(true);
+            if (serverStatus === 'stopped') {
+                setLoading(true);
             try {
                 const response = await fetch('/api/start-server', { method: 'POST' });
                 if (response.ok) {
@@ -25,6 +26,7 @@ const StartServer = () => {
                 console.error('Lỗi khi khởi động máy chủ:', error);
             } finally {
                 setLoading(false);
+            }
             }
         };
         const interval = setInterval(() => {
