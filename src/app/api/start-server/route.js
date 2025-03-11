@@ -2,7 +2,7 @@ export async function POST(request) {
     try {
         // Logic để khởi động máy chủ
         console.log('Khởi động máy chủ...');
-        const response = await fetch(`${process.env.URL_BACKEND}/v1/start-server`, { method: 'POST' });
+        const response = await fetch(`${process.env.URL_BACKEND}/v1/start-server`);
         if (!response.ok) {
             console.error('Không thể khởi động máy chủ');
             return new Response('Không thể khởi động máy chủ', { status: 500 });
