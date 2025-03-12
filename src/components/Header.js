@@ -4,13 +4,13 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { UserContext } from '../context/UserContext';
 import { loadingContext } from '../context/Loading';
 import NavMenu from './ui/NavMenu';
-import { addToast } from '../context/Toast';
+import { useToast } from '../context/Toast';
 import { useRouter } from 'next/navigation'; // Correct import
 
 const Header = () => {
   const { user, setUser } = useContext(UserContext);
   const { setLoading } = useContext(loadingContext);
-  const { addToast } = addToast();
+  const { addToast } = useToast();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const element = [{ title: 'Cài đặt', path: '/cai-dat' }];
