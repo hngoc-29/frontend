@@ -4,11 +4,13 @@ import { useContext, useEffect, useState, useRef } from 'react';
 import { UserContext } from '../context/UserContext';
 import { loadingContext } from '../context/Loading';
 import NavMenu from './ui/NavMenu';
+import { addToast } from '../context/Toast';
 import { useRouter } from 'next/navigation'; // Correct import
 
 const Header = () => {
   const { user, setUser } = useContext(UserContext);
   const { setLoading } = useContext(loadingContext);
+  const { addToast } = addToast();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const element = [{ title: 'Cài đặt', path: '/cai-dat' }];
@@ -42,7 +44,7 @@ const Header = () => {
         const data = await response.json();
         setUser(data);
       } catch (err) {
-        router.push('/dang-nhap');
+        addToast({ type: 'error', title: 'Lỗi', description: 'Không thể lấy thông tin người dùng' });
       }
       setLoading(false);
     };
