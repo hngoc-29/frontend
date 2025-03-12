@@ -6,6 +6,7 @@ import { loadingContext } from '../context/Loading';
 import NavMenu from './ui/NavMenu';
 import { useToast } from '../context/Toast';
 import { useRouter } from 'next/navigation'; // Correct import
+import { checkToken } from './TokenRefresher';
 
 const Header = () => {
   const { user, setUser } = useContext(UserContext);
@@ -37,6 +38,8 @@ const Header = () => {
         return;
       }
       try {
+        // Wait for token refresh if needed
+        await checkToken();
         const response = await fetch('/api/user/get-user');
         if (!response.ok) {
           throw new Error('Failed to fetch user');

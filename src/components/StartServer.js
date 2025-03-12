@@ -25,6 +25,7 @@ const StartServer = () => {
                 setLoading(false);
             }
         };
+        handleStartServer();
         const interval = setInterval(() => {
             handleStartServer();
         }, 1000 * 60 * 14); // Khởi động lại máy chủ sau 14 phút

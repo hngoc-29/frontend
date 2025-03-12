@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import Header from '../components/Header';
 import Bottom from '../components/Bottom';
 import Loading from '../components/Loading';
-import TokenRefresher from '../components/TokenRefresher';
+import TokenRefresher, { checkToken } from '../components/TokenRefresher';
 import { GetPath } from '../context/GetPath';
 import { LoadingProvider } from '../context/Loading';
 import { UserProvider } from '../context/UserContext';
@@ -57,7 +57,7 @@ export const metadata = {
       "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
     ],
   },
-  metadataBase: new URL("https://your-music-app-domain.com"),
+  metadataBase: new URL(process.env.BASE_URL || "https://frontend-hngoc-29s-projects.vercel.app"),
 };
 
 export default function RootLayout({ children }) {
@@ -71,8 +71,8 @@ export default function RootLayout({ children }) {
             <LoadingProvider>
               <Loading />
               <StartServer />
-              <Header />
               <TokenRefresher />
+              <Header />
               <div className='py-[60px]'>
                 <ThumbnailProvider>
                   <main className='overflow-auto'>{children}</main>

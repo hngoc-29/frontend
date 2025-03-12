@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../../context/Toast';
 import VerifyCodeModal from '../../components/VerifyCodeModal';
+import { checkToken } from '../../components/TokenRefresher';
 
 export default function Modal2({ isOpen, onClose, content }) {
   const { addToast } = useToast();
@@ -35,6 +36,7 @@ export default function Modal2({ isOpen, onClose, content }) {
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
+      await checkToken(); // Check and refresh token if needed
       if (content.title.toLowerCase().includes('mật khẩu')) {
         if (newPassword !== confirmPassword) {
           setError('Mật khẩu mới và xác nhận mật khẩu không khớp');

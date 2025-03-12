@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@mui/material';
 import { useToast } from '../../../context/Toast';
+import { checkToken } from '../../../components/TokenRefresher';
 
 const ThumbnailManager = () => {
     const { addToast } = useToast();
@@ -19,6 +20,7 @@ const ThumbnailManager = () => {
     const fetchThumbnails = async () => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/thumbnails`);
             const data = await response.json();
             setThumbnails(data.thumbnails);
@@ -32,6 +34,7 @@ const ThumbnailManager = () => {
     const handleDeleteThumbnail = async (thumbnailId) => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/thumbnails?id=${thumbnailId}`, {
                 method: 'DELETE',
             });
@@ -74,6 +77,7 @@ const ThumbnailManager = () => {
 
     const handleSubmit = async () => {
         try {
+            await checkToken(); // Check and refresh token if needed
             const method = editMode ? 'PUT' : 'POST';
             const url = editMode ? `/api/manager/thumbnails?id=${currentThumbnailId}` : '/api/manager/thumbnails';
             const formData = new FormData();

@@ -13,6 +13,7 @@ import {
     MoreVert,
 } from "@mui/icons-material";
 import { useToast } from "../../../context/Toast";
+import { checkToken } from "../../../components/TokenRefresher";
 
 const Main = ({ id }) => {
     const router = useRouter();
@@ -89,6 +90,7 @@ const Main = ({ id }) => {
         if (!id) return;
         const fetchThumbnails = async () => {
             try {
+                await checkToken();
                 const response = await fetch(`/api/manager/sings?parent=${id}`);
                 const data = await response.json();
                 if (!response.ok) {

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Select, InputLabel, FormControl, CircularProgress } from '@mui/material';
 import { useToast } from '../../../context/Toast';
+import { checkToken } from '../../../components/TokenRefresher';
 
 const SingManager = () => {
     const { addToast } = useToast();
@@ -27,6 +28,7 @@ const SingManager = () => {
     const fetchThumbnails = async () => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/thumbnails`);
             const data = await response.json();
             setThumbnails(data.thumbnails);
@@ -40,6 +42,7 @@ const SingManager = () => {
     const fetchSings = async (thumbnailId) => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/sings?parent=${thumbnailId}`);
             const data = await response.json();
             setSings(data.Sings);
@@ -53,6 +56,7 @@ const SingManager = () => {
     const handleDeleteSing = async (singId) => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/sings?id=${singId}`, {
                 method: 'DELETE',
             });
@@ -94,6 +98,7 @@ const SingManager = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const method = editMode ? 'PUT' : 'POST';
             const url = editMode ? `/api/manager/sings?id=${currentSingId}` : '/api/manager/sings';
             const formData = new FormData();
@@ -120,11 +125,7 @@ const SingManager = () => {
                 fetchSings(selectedThumbnail);
                 handleCloseDialog();
             } else {
-                addToast({ type: 'error', title: 'Thất bại', description: editMode ? 'Cập nhật sing thất bại' : 'Tạo sing thất bại' });
             }
-        } catch (error) {
-            console.error(editMode ? 'Cập nhật sing thất bại' : 'Tạo sing thất bại', error);
-            addToast({ type: 'error', title: 'Thất bại', description: editMode ? 'Cập nhật sing thất bại' : 'Tạo sing thất bại' });
         } finally {
             setLoading(false);
         }

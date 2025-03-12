@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useToast } from '../../context/Toast';
 import { UserContext } from '../../context/UserContext';
 import { getUserInfo } from '../utils/getUserInfo';
+import { checkToken } from '@/components/TokenRefresher';
 
 export default function Modal({ isOpen, onClose, content }) {
   const { addToast } = useToast();
@@ -33,6 +34,7 @@ export default function Modal({ isOpen, onClose, content }) {
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
+      await checkToken();
       let response;
       const formData = new FormData();
       formData.append('id', content.id);

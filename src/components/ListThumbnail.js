@@ -11,6 +11,8 @@ import {
   useToast
 } from '../context/Toast';
 import { Visibility, PlayArrow } from '@mui/icons-material';
+import { checkToken } from '../components/TokenRefresher';
+
 const ListThumbnail = () => {
   const {
     addToast
@@ -21,6 +23,7 @@ const ListThumbnail = () => {
   } = useContext(thumbnailContext);
   useEffect(() => {
     const getThumbnail = async () => {
+      await checkToken(); // Check and refresh token if needed
       const res = await fetch('/api/thumbnails');
       const thumbnails = await res.json();
       if (!thumbnails.success) return addToast({

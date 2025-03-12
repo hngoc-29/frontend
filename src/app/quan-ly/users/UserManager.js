@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { useToast } from '../../../context/Toast';
+import { checkToken } from '../../../components/TokenRefresher';
 
 const UserManager = () => {
     const { addToast } = useToast();
@@ -18,6 +19,7 @@ const UserManager = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/getuser?page=${page + 1}&limit=${rowsPerPage}`);
             const data = await response.json();
             setUsers(data.users);
@@ -32,6 +34,7 @@ const UserManager = () => {
     const handleDeleteUser = async (userId) => {
         setLoading(true);
         try {
+            await checkToken(); // Check and refresh token if needed
             const response = await fetch(`/api/manager/deleteuser?id=${userId}`, {
                 method: 'DELETE',
             });

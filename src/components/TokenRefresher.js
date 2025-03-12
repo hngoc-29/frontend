@@ -1,34 +1,41 @@
 'use client';
 import { useEffect } from 'react';
 
+async function refreshToken(decodeToken) {
+  const response = await fetch('/api/auth/refresh-token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'id': decodeToken._id,
+    },
+  });
+  if (response.ok) {
+    const data = await response.json();
+    document.cookie = `access_token=${data.access_token}; path=/;`;
+    document.cookie = `refresh_token=${data.refresh_token}; path=/;`;
+    return `access_token=${data.access_token}`;
+  }
+  return null;
+}
+
+export async function checkToken() {
+  let accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
+
+  if (accessToken) {
+    let tokenValue = accessToken.split('=')[1];
+    let decodeToken = parseJwt(tokenValue);
+    console.log(decodeToken);
+    let tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
+    let timeLeft = tokenExpiry - Date.now();
+    if (timeLeft < 60 * 60 * 1000) {
+      accessToken = await refreshToken(decodeToken);
+    }
+  }
+}
+
 export default function TokenRefresher() {
   useEffect(() => {
-    const checkToken = async () => {
-      let accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
-
-      if (accessToken) {
-        let tokenValue = accessToken.split('=')[1];
-        let decodeToken = parseJwt(tokenValue);
-        let tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
-        let timeLeft = tokenExpiry - Date.now();
-        if (timeLeft < 60 * 60 * 1000) {
-          const response = await fetch('/api/auth/refresh-token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'id': decodeToken._id,
-            },
-          });
-          if (response.ok) {
-            const data = await response.json();
-            document.cookie = `access_token=${data.access_token}; path=/;`;
-            document.cookie = `refresh_token=${data.refresh_token}; path=/;`;
-            accessToken = `access_token=${data.access_token}`;
-          }
-        }
-      }
-    };
-
+    checkToken();
     const intervalId = setInterval(() => checkToken(), 30 * 60 * 1000); // Kiểm tra mỗi 30 m
     return () => clearInterval(intervalId);
   }, []);

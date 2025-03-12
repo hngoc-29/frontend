@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../context/Toast';
-
+import { checkToken } from './TokenRefresher';
 export default function VerifyCodeModal({ isOpen, onClose, userId }) {
   const { addToast } = useToast();
   const [code, setCode] = useState('');
@@ -29,6 +29,7 @@ export default function VerifyCodeModal({ isOpen, onClose, userId }) {
 
   const handleVerify = async () => {
     try {
+      await checkToken();
       const response = await fetch('/api/user/verifyUser', {
         method: 'POST',
         headers: {
@@ -68,6 +69,7 @@ export default function VerifyCodeModal({ isOpen, onClose, userId }) {
 
   const handleResendCode = async () => {
     try {
+      await checkToken();
       setIsResendDisabled(true);
       const response = await fetch('/api/newCode', {
         method: 'POST',
