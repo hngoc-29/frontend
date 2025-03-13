@@ -10,6 +10,8 @@ import { UserProvider } from '../context/UserContext';
 import { ThumbnailProvider } from '../context/Thumbnails';
 import { ToastProvider } from '../context/Toast';
 import StartServer from '../components/StartServer';
+import FloatingAudioPlayer from '../components/FloatingAudioPlayer';
+import { GlobalAudioProvider } from '../context/GlobalAudioContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -65,25 +67,27 @@ export default function RootLayout({ children }) {
     <html lang="vi">
       <head />
       <body className={inter.className}>
-
-        <UserProvider>
-          <ToastProvider>
-            <LoadingProvider>
-              <Loading />
-              <StartServer />
-              <TokenRefresher />
-              <Header />
-              <div className='py-[60px]'>
-                <ThumbnailProvider>
-                  <main className='overflow-auto'>{children}</main>
-                </ThumbnailProvider>
-              </div>
-              <GetPath>
-                <Bottom />
-              </GetPath>
-            </LoadingProvider>
-          </ToastProvider>
-        </UserProvider>
+        <GlobalAudioProvider>
+          <UserProvider>
+            <ToastProvider>
+              <LoadingProvider>
+                <Loading />
+                <StartServer />
+                <TokenRefresher />
+                <Header />
+                <div className='py-[60px]'>
+                  <ThumbnailProvider>
+                    <main className='overflow-auto'>{children}</main>
+                  </ThumbnailProvider>
+                </div>
+                <GetPath>
+                  <Bottom />
+                </GetPath>
+              </LoadingProvider>
+            </ToastProvider>
+          </UserProvider>
+          <FloatingAudioPlayer />
+        </GlobalAudioProvider>
       </body>
     </html>
   );

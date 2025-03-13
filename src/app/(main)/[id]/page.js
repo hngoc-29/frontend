@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import Main from './Main';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params, searchParams }) {
     const id = (await params).id;
     let songIndex = 0;
