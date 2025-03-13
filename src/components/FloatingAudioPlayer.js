@@ -10,6 +10,9 @@ const FloatingAudioPlayer = () => {
     const { globalAudioState, setGlobalAudioState, audioRef } = useGlobalAudio();
     const { currentIndex, setCurrentIndex, sings, isRepeat, isRandom } = useAudio();
     const [isVisible, setIsVisible] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: window.innerHeight - 96 }); // Initial position higher up
+    const [dragging, setDragging] = useState(false);
+    const [rel, setRel] = useState(null);
 
     // Refs để theo dõi trạng thái
     const isMounted = useRef(false);
@@ -127,16 +130,63 @@ const FloatingAudioPlayer = () => {
         return () => clearInterval(interval); // Dọn dẹp interval khi unmount
     }, [audioRef, handleNext]);
 
+    const handleMouseDown = (e) => {
+        if (e.button !== 0) return;
+        const pos = e.target.getBoundingClientRect();
+        setRel({
+            x: e.pageX - pos.left,
+            y: e.pageY - pos.top
+        });
+        setDragging(true);
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    const handleMouseUp = () => {
+        setDragging(false);
+    };
+
+    const handleMouseMove = (e) => {
+        if (!dragging) return;
+        let newX = e.pageX - rel.x;
+        let newY = e.pageY - rel.y;
+
+        // Prevent the player from hiding, only lose the overflow part
+        if (newX < 0) newX = 0;
+        if (newY < 0) newY = 0;
+        if (newX > window.innerWidth - 48) newX = window.innerWidth - 48; // Adjust width as needed
+        if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
+
+        setPosition({ x: newX, y: newY });
+
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [dragging]);
+
     // Nếu không hiển thị, return null để không render gì
     if (!sings.length || !isVisible) {
         return null;
     }
 
     // Vị trí hiển thị khác nhau tùy thuộc vào thiết bị
-    const positionClass = "fixed bottom-15 right-4 bg-white p-4 shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player";
+    const positionClass = "fixed z-[1000] bg-white p-4 shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player";
 
     return (
-        <div className={positionClass} onClick={() => router.push(`/${globalAudioState.id}`)}>
+        <div
+            className={positionClass}
+            onMouseDown={handleMouseDown}
+            style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute' }}
+            onClick={() => router.push(`/${globalAudioState.id}`)}
+        >
             <div className="mr-4">
                 <img
                     src={sings[currentIndex]?.image_url}
