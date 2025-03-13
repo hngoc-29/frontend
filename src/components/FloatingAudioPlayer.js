@@ -10,9 +10,10 @@ const FloatingAudioPlayer = () => {
     const { globalAudioState, setGlobalAudioState, audioRef } = useGlobalAudio();
     const { currentIndex, setCurrentIndex, sings, isRepeat, isRandom } = useAudio();
     const [isVisible, setIsVisible] = useState(false);
-    const [position, setPosition] = useState({ x: 0, y: window.innerHeight - 96 }); // Initial position higher up
+    const [position, setPosition] = useState({ x: 0, y: typeof window !== 'undefined' ? window.innerHeight - 96 : 0 }); // Initial position higher up
     const [dragging, setDragging] = useState(false);
     const [rel, setRel] = useState(null);
+    const playedIndices = useRef([]);
 
     // Refs để theo dõi trạng thái
     const isMounted = useRef(false);
@@ -39,7 +40,7 @@ const FloatingAudioPlayer = () => {
 
     // Hàm xử lý phát/dừng
     const handlePlayPause = (e) => {
-        e.stopPropagation(); // Ngăn chặn event bubbling
+        if (e) e.stopPropagation(); // Ngăn chặn event bubbling
 
         if (audioRef.current) {
             const isAudioActuallyPlaying = !audioRef.current.paused;
@@ -64,9 +65,9 @@ const FloatingAudioPlayer = () => {
     };
 
     const handleNext = (e) => {
-        e.stopPropagation(); // Ngăn chặn event bubbling
-        const isRepeat = localStorage.getItem('isRepeat') === 'true' ? true : false;
-        const isRandom = localStorage.getItem('isRandom') === 'true' ? true : false;
+        if (e) e.stopPropagation(); // Ngăn chặn event bubbling
+        const isRepeat = JSON.parse(localStorage.getItem('playerConfig'))?.isRepeat;
+        const isRandom = JSON.parse(localStorage.getItem('playerConfig'))?.isRandom;
         if (isRepeat) {
             // Nếu đang ở chế độ lặp lại, phát lại bài hiện tại
             audioRef.current.currentTime = 0; // Reset thời gian về 0
@@ -92,7 +93,7 @@ const FloatingAudioPlayer = () => {
     };
 
     const handlePrev = (e) => {
-        e.stopPropagation(); // Ngăn chặn event bubbling
+        if (e) e.stopPropagation(); // Ngăn chặn event bubbling
         setCurrentIndex((prevIndex) => (prevIndex - 1 + sings.length) % sings.length);
         if (audioRef.current) {
             audioRef.current.src = sings[(currentIndex - 1 + sings.length) % sings.length].audio_url; // Cập nhật src
@@ -105,10 +106,17 @@ const FloatingAudioPlayer = () => {
     // Hàm để lấy chỉ số bài hát ngẫu nhiên không trùng với bài hiện tại
     const getRandomIndex = (currentIdx, length) => {
         if (length === 0) return 0;
+        if (playedIndices.current.length === length) {
+            playedIndices.current = []; // Reset khi tất cả bài đã được phát
+        }
         let newIndex;
         do {
             newIndex = Math.floor(Math.random() * length);
-        } while (newIndex === currentIdx);
+            if (newIndex === currentIdx) {
+                newIndex = (newIndex + 1) % length; // Đảm bảo không trùng với bài hiện tại
+            }
+        } while (playedIndices.current.includes(newIndex));
+        playedIndices.current.push(newIndex);
         return newIndex;
     };
 
@@ -118,16 +126,21 @@ const FloatingAudioPlayer = () => {
             if (audioRef.current) {
                 const currentTime = audioRef.current.currentTime;
                 const duration = audioRef.current.duration;
-
                 if (currentTime >= duration) {
                     handleNext(); // Gọi hàm next nếu currentTime >= duration
                 }
             }
         };
 
-        const interval = setInterval(checkCurrentTime, 1000); // Kiểm tra mỗi giây
+        if (audioRef.current) {
+            audioRef.current.addEventListener('timeupdate', checkCurrentTime);
+        }
 
-        return () => clearInterval(interval); // Dọn dẹp interval khi unmount
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.removeEventListener('timeupdate', checkCurrentTime);
+            }
+        };
     }, [audioRef, handleNext]);
 
     const handleMouseDown = (e) => {
@@ -164,11 +177,15 @@ const FloatingAudioPlayer = () => {
     };
 
     useEffect(() => {
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        if (typeof window !== 'undefined') {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        }
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
+            if (typeof window !== 'undefined') {
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
         };
     }, [dragging]);
 
@@ -178,13 +195,13 @@ const FloatingAudioPlayer = () => {
     }
 
     // Vị trí hiển thị khác nhau tùy thuộc vào thiết bị
-    const positionClass = "fixed z-[1000] bg-white p-4 shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player";
+    const positionClass = "fixed z-[1000] bg-white p-4 shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player overflow-hidden";
 
     return (
         <div
             className={positionClass}
             onMouseDown={handleMouseDown}
-            style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute' }}
+            style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute', clipPath: 'inset(0)' }}
             onClick={() => router.push(`/${globalAudioState.id}`)}
         >
             <div className="mr-4">
