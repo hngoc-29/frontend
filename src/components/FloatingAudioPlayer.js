@@ -166,7 +166,14 @@ const FloatingAudioPlayer = () => {
             navigator.mediaSession.setActionHandler('nexttrack', handleNext);
         }
     }, [currentIndex, sings, handlePlayPause, handlePrev, handleNext]);
-
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.src = sings[currentIndex]?.audio_url;
+            audioRef.current.play().catch(error => {
+                console.error("Không thể phát audio:", error);
+            });
+        }
+    }, [currentIndex, sings]);
     const handleMouseDown = (e) => {
         if (e.button !== 0) return;
         const pos = e.target.getBoundingClientRect();
