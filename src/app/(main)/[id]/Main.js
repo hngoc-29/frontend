@@ -122,28 +122,6 @@ const Main = ({ id }) => {
                     }
                 }
             }
-            // Cập nhật media session
-            if ('mediaSession' in navigator) {
-                const artworkUrl = sings[currentIndex]?.image_url || 'fallback-image-url.png';
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: sings[currentIndex]?.singname || "Default Song",
-                    artist: sings[currentIndex]?.author || "Unknown Artist",
-                    album: "Album Name",
-                    artwork: [
-                        { src: artworkUrl, sizes: '96x96', type: 'image/png' },
-                        { src: artworkUrl, sizes: '128x128', type: 'image/png' },
-                        { src: artworkUrl, sizes: '192x192', type: 'image/png' },
-                        { src: artworkUrl, sizes: '256x256', type: 'image/png' },
-                        { src: artworkUrl, sizes: '384x384', type: 'image/png' },
-                        { src: artworkUrl, sizes: '512x512', type: 'image/png' },
-                    ]
-                });
-
-                navigator.mediaSession.setActionHandler('play', handlePlayPause);
-                navigator.mediaSession.setActionHandler('pause', handlePlayPause);
-                navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
-                navigator.mediaSession.setActionHandler('nexttrack', handleNext);
-            }
         }
         previousIndex.current = currentIndex;
     }, [sings, currentIndex]);

@@ -40,7 +40,7 @@ const FloatingAudioPlayer = () => {
 
     // Hàm xử lý phát/dừng
     const handlePlayPause = (e) => {
-        if (e) e.stopPropagation(); // Ngăn chặn event bubbling
+        if (e && e.stopPropagation) e.stopPropagation(); // Ngăn chặn event bubbling
 
         if (audioRef.current) {
             const isAudioActuallyPlaying = !audioRef.current.paused;
@@ -65,7 +65,7 @@ const FloatingAudioPlayer = () => {
     };
 
     const handleNext = (e) => {
-        if (e) e.stopPropagation(); // Ngăn chặn event bubbling
+        if (e && e.stopPropagation) e.stopPropagation(); // Ngăn chặn event bubbling
         const isRepeat = JSON.parse(localStorage.getItem('playerConfig'))?.isRepeat;
         const isRandom = JSON.parse(localStorage.getItem('playerConfig'))?.isRandom;
         if (isRepeat) {
@@ -93,7 +93,7 @@ const FloatingAudioPlayer = () => {
     };
 
     const handlePrev = (e) => {
-        if (e) e.stopPropagation(); // Ngăn chặn event bubbling
+        if (e && e.stopPropagation) e.stopPropagation(); // Ngăn chặn event bubbling
         setCurrentIndex((prevIndex) => (prevIndex - 1 + sings.length) % sings.length);
         if (audioRef.current) {
             audioRef.current.src = sings[(currentIndex - 1 + sings.length) % sings.length].audio_url; // Cập nhật src
