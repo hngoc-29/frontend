@@ -71,7 +71,7 @@ export default function VerifyCodeModal({ isOpen, onClose, userId }) {
     try {
       await checkToken();
       setIsResendDisabled(true);
-      const response = await fetch('/api/newCode', {
+      const response = await fetch('/api/user/newCode', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

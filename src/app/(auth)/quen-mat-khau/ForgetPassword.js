@@ -1,6 +1,6 @@
 'use client'
 import {
-  useState
+  useState, useEffect
 } from 'react';
 import InfoEmty from '../../../components/ui/InfoEmty';
 import { useToast } from '../../../context/Toast';
@@ -10,8 +10,18 @@ const QuenMatKhau = () => {
     setEmail] = useState('');
   const [isSubmit,
     setIsSubmit] = useState(false);
+  const [delay, setDelay] = useState(0);
+
+  useEffect(() => {
+    if (delay > 0) {
+      const timer = setTimeout(() => setDelay(delay - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [delay]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (delay > 0) return; // Prevent API call if delay is greater than 0
     setIsSubmit(true);
     const res = await fetch('/api/user/forget', {
       method: 'POST',
@@ -21,16 +31,20 @@ const QuenMatKhau = () => {
       body: JSON.stringify({ email }),
     })
     const data = await res.json();
-    if (!data.success) return addToast({
-      type: 'error',
-      title: 'Quên mật khẩu',
-      description: data?.message
-    });
+    if (!data.success) {
+      setIsSubmit(false);
+      return addToast({
+        type: 'error',
+        title: 'Quên mật khẩu',
+        description: data?.message
+      });
+    }
     addToast({
       type: 'success',
       title: 'Quên mật khẩu',
       description: 'Mã xác nhận đã được gửi đến email của bạn'
     });
+    setDelay(60); // Set delay to 60 seconds after API call
   };
   return (
     <div className='mx-5'>
@@ -42,7 +56,9 @@ const QuenMatKhau = () => {
           {isSubmit && !email && <InfoEmty type='Email' />}
         </div>
         <div>
-          <button className='w-full bg-blue-400 py-2 rounded text-white'>Gửi mã</button>
+          <button className={`w-full py-2 rounded text-white ${delay > 0 ? 'bg-gray-400' : 'bg-blue-400'}`} disabled={delay > 0}>
+            {delay > 0 ? `${delay}s` : 'Gửi mã'}
+          </button>
         </div>
       </form>
     </div>
