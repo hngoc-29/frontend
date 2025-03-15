@@ -35,11 +35,6 @@ export const GlobalAudioProvider = ({ children }) => {
 
     // Khôi phục trạng thái khi ứng dụng load lại
     useEffect(() => {
-        addToast({
-            type: "info",
-            title: "Thông báo",
-            description: "GlobalAudioContext đã được mount.",
-        });
 
         // Thiết lập audio khi component mount
         if (!audioRef.current && typeof window !== 'undefined') {
@@ -282,11 +277,6 @@ export const GlobalAudioProvider = ({ children }) => {
 
         // Cleanup khi unmount
         return () => {
-            addToast({
-                type: "info",
-                title: "Thông báo",
-                description: "GlobalAudioContext đang unmount.",
-            });
             window.removeEventListener('popstate', handleRouteChange);
             document.removeEventListener('click', handleUserInteraction);
             observer.disconnect();
