@@ -1,10 +1,12 @@
 'use client';
 import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { AudioProvider } from './AudioContext';
+import { useToast } from './Toast';
 
 const GlobalAudioContext = createContext();
 
 export const GlobalAudioProvider = ({ children }) => {
+    const { addToast } = useToast();
     const [globalAudioState, setGlobalAudioState] = useState({
         isPlaying: false,
         currentSong: null,
@@ -33,7 +35,11 @@ export const GlobalAudioProvider = ({ children }) => {
 
     // Khôi phục trạng thái khi ứng dụng load lại
     useEffect(() => {
-        console.log("GlobalAudioContext mount");
+        addToast({
+            type: "info",
+            title: "Thông báo",
+            description: "GlobalAudioContext đã được mount.",
+        });
 
         // Thiết lập audio khi component mount
         if (!audioRef.current && typeof window !== 'undefined') {
@@ -62,8 +68,6 @@ export const GlobalAudioProvider = ({ children }) => {
                         if (!prev.isPlaying) return prev;
                         return { ...prev, isPlaying: false };
                     });
-                } else {
-                    console.log("Ignoring pause event due to keepPlaying flag");
                 }
             });
         }
@@ -124,12 +128,20 @@ export const GlobalAudioProvider = ({ children }) => {
                                 const playPromise = audioRef.current.play();
                                 if (playPromise) {
                                     playPromise.catch(error => {
-                                        console.error("Error playing audio:", error);
                                         setGlobalAudioState(prev => ({ ...prev, isPlaying: false }));
+                                        addToast({
+                                            type: "error",
+                                            title: "Lỗi phát nhạc",
+                                            description: "Không thể phát bài hát này, vui lòng thử lại sau.",
+                                        });
                                     });
                                 }
                             } catch (err) {
-                                console.error("Error auto-playing:", err);
+                                addToast({
+                                    type: "error",
+                                    title: "Lỗi phát nhạc",
+                                    description: "Không thể phát bài hát này, vui lòng thử lại sau.",
+                                });
                             }
                         }
                     }
@@ -137,7 +149,11 @@ export const GlobalAudioProvider = ({ children }) => {
 
                 sessionStorage?.removeItem("keepPlaying");
             } catch (error) {
-                console.error("Error in restoreState:", error);
+                addToast({
+                    type: "error",
+                    title: "Lỗi khôi phục trạng thái",
+                    description: "Không thể khôi phục trạng thái phát nhạc, vui lòng thử lại sau.",
+                });
             }
         };
 
@@ -156,12 +172,9 @@ export const GlobalAudioProvider = ({ children }) => {
 
             // Thêm điều kiện: phải có audio đang phát hoặc đã có trạng thái phát
             if (shouldShowPlayer && (isAudioPlaying || globalAudioState.isPlaying)) {
-                console.log("Should show floating player, audio playing:", isAudioPlaying);
-
                 setTimeout(() => {
                     const floatingPlayer = document.querySelector('.floating-audio-player');
                     if (floatingPlayer) {
-                        console.log("Showing floating player from showFloatingPlayer function");
                         floatingPlayer.style.display = 'flex';
                     }
                 }, 50);
@@ -182,8 +195,6 @@ export const GlobalAudioProvider = ({ children }) => {
                 // Kiểm tra trạng thái phát trực tiếp từ audio element
                 const isAudioPlaying = !audioRef.current.paused;
 
-                console.log("Route change, audio playing:", isAudioPlaying);
-
                 sessionStorage.setItem("audioCurrentTime", audioRef.current.currentTime);
                 sessionStorage.setItem("isAudioPlaying", isAudioPlaying.toString());
                 sessionStorage.setItem("previousState", JSON.stringify({
@@ -194,7 +205,6 @@ export const GlobalAudioProvider = ({ children }) => {
 
                 // Đặt keepPlaying để không pause audio
                 if (isAudioPlaying) {
-                    console.log("Setting keepPlaying flag during route change");
                     sessionStorage.setItem("keepPlaying", "true");
                     // Đặt cờ hiển thị floating player
                     sessionStorage.setItem("showFloatingPlayer", "true");
@@ -272,7 +282,11 @@ export const GlobalAudioProvider = ({ children }) => {
 
         // Cleanup khi unmount
         return () => {
-            console.log("GlobalAudioContext unmounting");
+            addToast({
+                type: "info",
+                title: "Thông báo",
+                description: "GlobalAudioContext đang unmount.",
+            });
             window.removeEventListener('popstate', handleRouteChange);
             document.removeEventListener('click', handleUserInteraction);
             observer.disconnect();
@@ -303,7 +317,6 @@ export const GlobalAudioProvider = ({ children }) => {
 
                 // Đảm bảo audio không bị dừng
                 if (isAudioPlaying) {
-                    console.log("Setting keepPlaying flag during unmount");
                     sessionStorage.setItem("keepPlaying", "true");
                     sessionStorage.setItem("showFloatingPlayer", "true");
                 }
@@ -329,12 +342,15 @@ export const GlobalAudioProvider = ({ children }) => {
             if (globalAudioState.isPlaying && audioRef.current.paused) {
                 // Chỉ phát khi đã có tương tác người dùng
                 if (hasUserInteracted.current) {
-                    console.log("State changed to playing, attempting to play audio");
                     const playPromise = audioRef.current.play();
                     if (playPromise) {
                         playPromise.catch(error => {
-                            console.error("Error playing audio on state change:", error);
                             setGlobalAudioState(prev => ({ ...prev, isPlaying: false }));
+                            addToast({
+                                type: "error",
+                                title: "Lỗi phát nhạc",
+                                description: "Không thể phát bài hát này, vui lòng thử lại sau.",
+                            });
                         });
                     }
                 }
@@ -342,24 +358,18 @@ export const GlobalAudioProvider = ({ children }) => {
                 // Nếu không đang trong quá trình chuyển trang
                 const keepPlaying = sessionStorage.getItem("keepPlaying") === "true";
                 if (!keepPlaying) {
-                    console.log("State changed to paused, pausing audio");
                     audioRef.current.pause();
-                } else {
-                    console.log("Ignoring pause due to keepPlaying flag");
                 }
             } else if (isAudioActuallyPlaying !== globalAudioState.isPlaying) {
                 // Đồng bộ trạng thái nếu không khớp
-                console.log("Synchronizing isPlaying state with actual audio state");
                 setGlobalAudioState(prev => ({ ...prev, isPlaying: isAudioActuallyPlaying }));
             }
         }
 
         // Cập nhật hiển thị FloatingAudioPlayer
         if (shouldShowPlayer && (globalAudioState.isPlaying || isAudioActuallyPlaying)) {
-            console.log("State changed, should show floating player");
             const floatingPlayer = document.querySelector('.floating-audio-player');
             if (floatingPlayer) {
-                console.log("Showing floating player from state change effect");
                 floatingPlayer.style.display = 'flex';
             }
         }
