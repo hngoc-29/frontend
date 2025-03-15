@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import Main from './Main';
 
 export const dynamic = 'force-dynamic';
-
+let sings = [];
 export async function generateMetadata({ params, searchParams }) {
     const id = (await params).id;
     let songIndex = 0;
@@ -29,7 +29,7 @@ export async function generateMetadata({ params, searchParams }) {
             headers: { Cookie: cookieHeader },
         });
         const data = await res.json();
-        const sings = data?.Sings || [];
+        sings = data?.Sings || [];
 
         // Nếu chỉ số bài hát không hợp lệ, sử dụng bài hát đầu tiên
         if (songIndex < 0 || songIndex >= sings.length) {
@@ -117,7 +117,7 @@ const MainPage = async ({ params }) => {
     return (
         <div>
             <Main id={id}
-            singsSv={sings}
+                singsSv={sings}
             />
         </div>
     );

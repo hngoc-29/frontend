@@ -67,9 +67,9 @@ export default function RootLayout({ children }) {
     <html lang="vi">
       <head />
       <body className={inter.className}>
-        <GlobalAudioProvider>
-          <UserProvider>
-            <ToastProvider>
+        <ToastProvider>
+          <GlobalAudioProvider>
+            <UserProvider>
               <LoadingProvider>
                 <Loading />
                 <StartServer />
@@ -84,10 +84,10 @@ export default function RootLayout({ children }) {
                   <Bottom />
                 </GetPath>
               </LoadingProvider>
-            </ToastProvider>
-          </UserProvider>
-          <FloatingAudioPlayer />
-        </GlobalAudioProvider>
+            </UserProvider>
+            <FloatingAudioPlayer />
+          </GlobalAudioProvider>
+        </ToastProvider>
       </body>
     </html>
   );

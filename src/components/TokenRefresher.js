@@ -24,7 +24,6 @@ export async function checkToken() {
   if (accessToken) {
     let tokenValue = accessToken.split('=')[1];
     let decodeToken = parseJwt(tokenValue);
-    console.log(decodeToken);
     let tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
     let timeLeft = tokenExpiry - Date.now();
     if (timeLeft < 60 * 60 * 1000) {

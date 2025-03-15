@@ -92,7 +92,6 @@ const Main = ({ id, singsSv }) => {
             // Đặt timeout để đảm bảo FloatingAudioPlayer hiển thị sau khi trang đã chuyển
             // và Main component đã unmount
             setTimeout(() => {
-                console.log("Showing floating player after unmount");
                 const floatingPlayer = document.querySelector('.floating-audio-player');
                 const isAudioPlaying = audioRef.current && !audioRef.current.paused;
 
@@ -130,7 +129,7 @@ const Main = ({ id, singsSv }) => {
     useEffect(() => {
         if (!id) return;
         const fetchThumbnails = async () => {
-            if(singsSv.length !== 0) return setSings(singsSv);
+            if (singsSv.length !== 0) return setSings(singsSv);
             try {
                 await checkToken();
                 const response = await fetch(`/api/manager/sings?parent=${id}`);
@@ -277,7 +276,6 @@ const Main = ({ id, singsSv }) => {
                             setGlobalAudioState(prev => ({ ...prev, isPlaying: true }));
                         })
                         .catch(error => {
-                            console.error("Không thể phát audio:", error);
                             addToast({
                                 type: "error",
                                 title: "Lỗi phát nhạc",
@@ -345,14 +343,12 @@ const Main = ({ id, singsSv }) => {
     };
 
     const onAudioPlay = () => {
-        console.log("Audio started playing");
         setIsPlaying(true);
         // Cập nhật trạng thái global
         setGlobalAudioState(prev => ({ ...prev, isPlaying: true }));
     };
 
     const onAudioPause = () => {
-        console.log("Audio paused");
         setIsPlaying(false);
         // Cập nhật trạng thái global
         setGlobalAudioState(prev => ({ ...prev, isPlaying: false }));

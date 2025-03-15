@@ -14,6 +14,8 @@ const FloatingAudioPlayer = () => {
     const [dragging, setDragging] = useState(false);
     const [rel, setRel] = useState(null);
     const playedIndices = useRef([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [wasDragged, setWasDragged] = useState(false);
 
     // Refs để theo dõi trạng thái
     const isMounted = useRef(false);
@@ -168,10 +170,13 @@ const FloatingAudioPlayer = () => {
     }, [currentIndex, sings, handlePlayPause, handlePrev, handleNext]);
     useEffect(() => {
         if (audioRef.current) {
-            audioRef.current.src = sings[currentIndex]?.audio_url;
-            audioRef.current.play().catch(error => {
-                console.error("Không thể phát audio:", error);
-            });
+            const currentSongUrl = sings[currentIndex]?.audio_url;
+            if (audioRef.current.src !== currentSongUrl) {
+                audioRef.current.src = currentSongUrl;
+                audioRef.current.play().catch(error => {
+                    console.error("Không thể phát audio:", error);
+                });
+            }
         }
     }, [currentIndex, sings]);
     const handleMouseDown = (e) => {
@@ -182,12 +187,14 @@ const FloatingAudioPlayer = () => {
             y: e.pageY - pos.top
         });
         setDragging(true);
+        setWasDragged(false);
         e.stopPropagation();
         e.preventDefault();
     };
 
     const handleMouseUp = () => {
         setDragging(false);
+        setIsDragging(false);
     };
 
     const handleMouseMove = (e) => {
@@ -202,9 +209,16 @@ const FloatingAudioPlayer = () => {
         if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
 
         setPosition({ x: newX, y: newY });
+        setWasDragged(true);
 
         e.stopPropagation();
         e.preventDefault();
+    };
+
+    const handleClick = () => {
+        if (!wasDragged) {
+            router.push(`/${globalAudioState.id}`);
+        }
     };
 
     useEffect(() => {
@@ -232,8 +246,8 @@ const FloatingAudioPlayer = () => {
         <div
             className={positionClass}
             onMouseDown={handleMouseDown}
+            onClick={handleClick}
             style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute', clipPath: 'inset(0)' }}
-            onClick={() => router.push(`/${globalAudioState.id}`)}
         >
             <div className="mr-4">
                 <img
