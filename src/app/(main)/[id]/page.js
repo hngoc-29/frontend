@@ -17,12 +17,11 @@ export async function generateMetadata({ params, searchParams }) {
 
     // Lấy base URL từ biến môi trường, nếu không có thì dùng localhost
     const baseUrl = process.env.BASE_URL || "https://frontend-hngoc-29s-projects.vercel.app";
-    console.log(baseUrl);
     try {
         // Lấy cookie hiện tại từ request
         const cookieHeader = (await cookies()).toString();
         // Tạo URL tuyệt đối cho API bằng cách nối với baseUrl
-        const apiUrl = new URL(`/api/manager/sings?parent=${id}`, baseUrl).href;
+        const apiUrl = new URL(`/api/manager/sings?parent=${id}&plusview=true`, baseUrl).href;
 
         // Gọi API, truyền cookie trong header để xác thực nếu cần
         const res = await fetch(apiUrl, {
@@ -117,7 +116,9 @@ const MainPage = async ({ params }) => {
     const { id } = await params;
     return (
         <div>
-            <Main id={id} />
+            <Main id={id}
+            singsSv={sings}
+            />
         </div>
     );
 };

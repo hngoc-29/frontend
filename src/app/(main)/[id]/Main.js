@@ -18,7 +18,7 @@ import { useGlobalAudio } from '../../../context/GlobalAudioContext';
 import AudioPlayer from '../../../components/AudioPlayer';
 import { useAudio } from '../../../context/AudioContext';
 
-const Main = ({ id }) => {
+const Main = ({ id, singsSv }) => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { addToast } = useToast();
@@ -130,6 +130,7 @@ const Main = ({ id }) => {
     useEffect(() => {
         if (!id) return;
         const fetchThumbnails = async () => {
+            if(singsSv.length !== 0) return setSings(singsSv);
             try {
                 await checkToken();
                 const response = await fetch(`/api/manager/sings?parent=${id}`);
