@@ -206,8 +206,8 @@ const FloatingAudioPlayer = () => {
         // Prevent the player from hiding, only lose the overflow part
         if (newX < 0) newX = 0;
         if (newY < 0) newY = 0;
-        if (newX > window.innerWidth - 96) newX = window.innerWidth - 96; // Adjust width as needed
-        if (newY > window.innerHeight - 96) newY = window.innerHeight - 96; // Adjust height as needed
+        if (newX > window.innerWidth - (isExpanded ? 420 : 48)) newX = window.innerWidth - (isExpanded ? 420 : 48); // Adjust width as needed
+        if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
 
         setPosition({ x: newX, y: newY });
         setWasDragged(true);
@@ -237,8 +237,8 @@ const FloatingAudioPlayer = () => {
         // Prevent the player from hiding, only lose the overflow part
         if (newX < 0) newX = 0;
         if (newY < 0) newY = 0;
-        if (newX > window.innerWidth - 96) newX = window.innerWidth - 96; // Adjust width as needed
-        if (newY > window.innerHeight - 96) newY = window.innerHeight - 96; // Adjust height as needed
+        if (newX > window.innerWidth - (isExpanded ? 420 : 48)) newX = window.innerWidth - (isExpanded ? 420 : 48); // Adjust width as needed
+        if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
 
         setPosition({ x: newX, y: newY });
         setWasDragged(true);
@@ -248,7 +248,8 @@ const FloatingAudioPlayer = () => {
     };
 
     const handleClick = (e) => {
-        if (!wasDragged && !isExpanded && !e.target.closest('button')) {
+        if (!wasDragged && isExpanded) {
+            setIsExpanded(false);
             router.back();
         }
     };
@@ -285,7 +286,7 @@ const FloatingAudioPlayer = () => {
     }
 
     // Vị trí hiển thị khác nhau tùy thuộc vào thiết bị
-    const positionClass = "fixed z-[1000] bg-white p-4 shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player overflow-hidden";
+    const positionClass = `fixed z-[1000] ${isExpanded ? `min-w-[280px] md:min-w-[320px] lg:min-w-[420px]` : `w-[48px] h-[48px]`} ${isExpanded ? `bg-white` : `bg-transparent`} p-${!isExpanded ? 0 : 4} shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player overflow-hidden`;
 
     return (
         <div
@@ -295,8 +296,8 @@ const FloatingAudioPlayer = () => {
             onClick={handleClick}
             style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute', clipPath: 'inset(0)' }}
         >
-            <button onClick={(e) => handleToggleExpand(e)} className="ml-2" aria-label="Toggle">
-                {isExpanded ? <Close /> : <img src={sings[currentIndex]?.image_url} alt="Open" className="w-full h-6 rounded-full" />}
+            <button onClick={(e) => handleToggleExpand(e)} className={`z-10 ${!isExpanded ? `p-0` : `ml-2`}`} aria-label="Toggle">
+                {isExpanded ? <Close className='mr-2 ml-[-4px]' /> : <img src={sings[currentIndex]?.image_url} alt="Open" className="z-20 w-[48px] h-[48px] rounded-full" />}
             </button>
             {isExpanded && (
                 <>
@@ -312,13 +313,13 @@ const FloatingAudioPlayer = () => {
                         <h4 className="text-sm font-bold">{sings[currentIndex]?.singname}</h4>
                         <p className="text-xs">{sings[currentIndex]?.author}</p>
                     </div>
-                    <button onClick={handlePrev} className="ml-2" aria-label="Previous">
+                    <button onClick={handlePrev} className="ml-2 z-20" aria-label="Previous">
                         <SkipPrevious />
                     </button>
-                    <button onClick={handlePlayPause} className="ml-2" aria-label={globalAudioState.isPlaying ? "Pause" : "Play"}>
+                    <button onClick={handlePlayPause} className="ml-2 z-20" aria-label={globalAudioState.isPlaying ? "Pause" : "Play"}>
                         {globalAudioState.isPlaying ? <Pause /> : <PlayArrow />}
                     </button>
-                    <button onClick={handleNext} className="ml-2" aria-label="Next">
+                    <button onClick={handleNext} className="ml-2 z-20" aria-label="Next">
                         <SkipNext />
                     </button>
                 </>
