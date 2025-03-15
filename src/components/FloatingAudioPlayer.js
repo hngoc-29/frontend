@@ -1,6 +1,6 @@
 'use client';
 import { useGlobalAudio } from '../context/GlobalAudioContext';
-import { PlayArrow, Pause, SkipPrevious, SkipNext } from '@mui/icons-material';
+import { PlayArrow, Pause, SkipPrevious, SkipNext, Close, OpenInFull } from '@mui/icons-material';
 import { useEffect, useState, useRef } from 'react';
 import { useAudio } from '../context/AudioContext';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ const FloatingAudioPlayer = () => {
     const playedIndices = useRef([]);
     const [isDragging, setIsDragging] = useState(false);
     const [wasDragged, setWasDragged] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true); // State to manage expanded/collapsed state
 
     // Refs để theo dõi trạng thái
     const isMounted = useRef(false);
@@ -205,8 +206,8 @@ const FloatingAudioPlayer = () => {
         // Prevent the player from hiding, only lose the overflow part
         if (newX < 0) newX = 0;
         if (newY < 0) newY = 0;
-        if (newX > window.innerWidth - 48) newX = window.innerWidth - 48; // Adjust width as needed
-        if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
+        if (newX > window.innerWidth - 96) newX = window.innerWidth - 96; // Adjust width as needed
+        if (newY > window.innerHeight - 96) newY = window.innerHeight - 96; // Adjust height as needed
 
         setPosition({ x: newX, y: newY });
         setWasDragged(true);
@@ -215,9 +216,49 @@ const FloatingAudioPlayer = () => {
         e.preventDefault();
     };
 
-    const handleClick = () => {
-        if (!wasDragged) {
-            router.push(`/${globalAudioState.id}`);
+    const handleTouchStart = (e) => {
+        if (e.touches.length !== 1) return;
+        const pos = e.target.getBoundingClientRect();
+        setRel({
+            x: e.touches[0].clientX - pos.left,
+            y: e.touches[0].clientY - pos.top
+        });
+        setDragging(true);
+        setWasDragged(false);
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    const handleTouchMove = (e) => {
+        if (!dragging || e.touches.length !== 1) return;
+        let newX = e.touches[0].clientX - rel.x;
+        let newY = e.touches[0].clientY - rel.y;
+
+        // Prevent the player from hiding, only lose the overflow part
+        if (newX < 0) newX = 0;
+        if (newY < 0) newY = 0;
+        if (newX > window.innerWidth - 96) newX = window.innerWidth - 96; // Adjust width as needed
+        if (newY > window.innerHeight - 96) newY = window.innerHeight - 96; // Adjust height as needed
+
+        setPosition({ x: newX, y: newY });
+        setWasDragged(true);
+
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    const handleClick = (e) => {
+        if (!wasDragged && !isExpanded && !e.target.closest('button')) {
+            router.back();
+        }
+    };
+
+    const handleToggleExpand = (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        if (isExpanded) {
+            setIsExpanded(false);
+        } else {
+            setIsExpanded(true);
         }
     };
 
@@ -225,11 +266,15 @@ const FloatingAudioPlayer = () => {
         if (typeof window !== 'undefined') {
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
+            document.addEventListener('touchmove', handleTouchMove);
+            document.addEventListener('touchend', handleMouseUp);
         }
         return () => {
             if (typeof window !== 'undefined') {
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
+                document.removeEventListener('touchmove', handleTouchMove);
+                document.removeEventListener('touchend', handleMouseUp);
             }
         };
     }, [dragging]);
@@ -246,30 +291,38 @@ const FloatingAudioPlayer = () => {
         <div
             className={positionClass}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
             onClick={handleClick}
             style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute', clipPath: 'inset(0)' }}
         >
-            <div className="mr-4">
-                <img
-                    src={sings[currentIndex]?.image_url}
-                    alt={sings[currentIndex]?.singname}
-                    className="w-12 h-12 rounded-full"
-                    loading="lazy"
-                />
-            </div>
-            <div className="flex-1">
-                <h4 className="text-sm font-bold">{sings[currentIndex]?.singname}</h4>
-                <p className="text-xs">{sings[currentIndex]?.author}</p>
-            </div>
-            <button onClick={handlePrev} className="ml-2" aria-label="Previous">
-                <SkipPrevious />
+            <button onClick={(e) => handleToggleExpand(e)} className="ml-2" aria-label="Toggle">
+                {isExpanded ? <Close /> : <img src={sings[currentIndex]?.image_url} alt="Open" className="w-full h-6 rounded-full" />}
             </button>
-            <button onClick={handlePlayPause} className="ml-2" aria-label={globalAudioState.isPlaying ? "Pause" : "Play"}>
-                {globalAudioState.isPlaying ? <Pause /> : <PlayArrow />}
-            </button>
-            <button onClick={handleNext} className="ml-2" aria-label="Next">
-                <SkipNext />
-            </button>
+            {isExpanded && (
+                <>
+                    <div className="mr-4">
+                        <img
+                            src={sings[currentIndex]?.image_url}
+                            alt={sings[currentIndex]?.singname}
+                            className="w-12 h-12 rounded-full"
+                            loading="lazy"
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <h4 className="text-sm font-bold">{sings[currentIndex]?.singname}</h4>
+                        <p className="text-xs">{sings[currentIndex]?.author}</p>
+                    </div>
+                    <button onClick={handlePrev} className="ml-2" aria-label="Previous">
+                        <SkipPrevious />
+                    </button>
+                    <button onClick={handlePlayPause} className="ml-2" aria-label={globalAudioState.isPlaying ? "Pause" : "Play"}>
+                        {globalAudioState.isPlaying ? <Pause /> : <PlayArrow />}
+                    </button>
+                    <button onClick={handleNext} className="ml-2" aria-label="Next">
+                        <SkipNext />
+                    </button>
+                </>
+            )}
         </div>
     );
 };
