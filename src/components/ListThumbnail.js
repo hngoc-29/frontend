@@ -54,7 +54,7 @@ const ListThumbnail = () => {
                 <div className='flex justify-between py-3'>
                   <div className='flex'>
                     <Visibility />
-                    <span className='ml-1'>{item.wiew}</span>
+                    <span className='ml-1'>{item.view}</span>
                   </div>
                   <div className='flex'>
                     <PlayArrow />
