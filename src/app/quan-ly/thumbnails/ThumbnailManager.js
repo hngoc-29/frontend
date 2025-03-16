@@ -76,6 +76,7 @@ const ThumbnailManager = () => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
             await checkToken(); // Check and refresh token if needed
             const method = editMode ? 'PUT' : 'POST';
@@ -107,6 +108,7 @@ const ThumbnailManager = () => {
             console.error(editMode ? 'Cập nhật thumbnail thất bại' : 'Tạo thumbnail thất bại', error);
             addToast({ type: 'error', title: 'Thất bại', description: editMode ? 'Cập nhật thumbnail thất bại' : 'Tạo thumbnail thất bại' });
         }
+        setLoading(false);
     };
 
 
@@ -208,8 +210,8 @@ const ThumbnailManager = () => {
                     <Button onClick={handleCloseDialog} color="primary">
                         Hủy
                     </Button>
-                    <Button onClick={handleSubmit} color="primary">
-                        {editMode ? 'Cập nhật' : 'Thêm'}
+                    <Button onClick={handleSubmit} color="primary" disabled={loading}>
+                        {loading ? <CircularProgress size={24} /> : (editMode ? 'Cập nhật' : 'Thêm')}
                     </Button>
                 </DialogActions>
             </Dialog>

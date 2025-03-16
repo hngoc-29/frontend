@@ -264,7 +264,15 @@ const FloatingAudioPlayer = () => {
     };
 
     useEffect(() => {
+        const handleScroll = () => {
+            setPosition((prevPosition) => ({
+                ...prevPosition,
+                y: window.innerHeight - 96
+            }));
+        };
+
         if (typeof window !== 'undefined') {
+            window.addEventListener('scroll', handleScroll);
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
             document.addEventListener('touchmove', handleTouchMove);
@@ -272,6 +280,7 @@ const FloatingAudioPlayer = () => {
         }
         return () => {
             if (typeof window !== 'undefined') {
+                window.removeEventListener('scroll', handleScroll);
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
                 document.removeEventListener('touchmove', handleTouchMove);

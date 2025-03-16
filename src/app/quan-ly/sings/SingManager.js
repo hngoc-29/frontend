@@ -64,7 +64,11 @@ const SingManager = () => {
                 addToast({ type: 'success', title: 'Thành công', description: 'Xóa sing thành công' });
                 fetchSings(selectedThumbnail);
             } else {
-                addToast({ type: 'error', title: 'Thất bại', description: 'Xóa sing thất bại' });
+                if (response.status === 413) {
+                    addToast({ type: 'error', title: 'Thất bại', description: 'Dung lượng file quá lớn' });
+                } else {
+                    addToast({ type: 'error', title: 'Thất bại', description: 'Xóa sing thất bại' });
+                }
             }
         } catch (error) {
             console.error('Xóa sing thất bại', error);
@@ -125,6 +129,9 @@ const SingManager = () => {
                 fetchSings(selectedThumbnail);
                 handleCloseDialog();
             } else {
+                if (response.status === 413) {
+                    addToast({ type: 'error', title: 'Thất bại', description: 'Dung lượng file quá lớn' });
+                }
             }
         } finally {
             setLoading(false);
