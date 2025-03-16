@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className='p-5'>
+    <div className='p-5 overflow-auto'>
       <ListThumbnail />
     </div>
   );

@@ -36,13 +36,25 @@ const ListThumbnail = () => {
     }
     getThumbnail();
   }, [])
+  useEffect(() => {
+    // Scroll to the saved position when the component mounts
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    if (savedPosition) {
+      window.scrollTo(0, parseInt(savedPosition, 10));
+      sessionStorage.removeItem('scrollPosition');
+    }
+  }, []);
   return (
-    <div>
+    <div className='overflow-auto'>
       <h1 className='text-3xl font-bold text-center'>Danh sách nhạc</h1>
       <div className='mt-5 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
         {thumbnail.map(item => (
           <div key={item._id} className='cursor-pointer group relative flex flex-col my-2 bg-white shadow-sm border border-slate-200 rounded-lg max-w-50 hover:shadow-lg transition-shadow duration-300 select-none'>
-            <Link href={item.description !== `fullsings` ? `/${item._id}` : `/all`}>
+            <Link href={item.description !== `fullsings` ? `/${item._id}` : `/all`} onClick={() => {
+              // Save the current scroll position before navigating
+              sessionStorage.setItem('scrollPosition', window.scrollY);
+              window.scrollTo(0, 0);
+            }}>
               <div className='relative h-40 overflow-hidden text-white rounded-t-lg'>
                 <Image className='transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110 w-full h-full object-cover'
                   src={`/api/proxy-image?url=${encodeURIComponent(item.image_url)}`} alt={item.title} layout='fill' objectFit='cover' />

@@ -210,7 +210,7 @@ const FloatingAudioPlayer = () => {
         if (newX > window.innerWidth - (isExpanded ? 420 : 48)) newX = window.innerWidth - (isExpanded ? 420 : 48); // Adjust width as needed
         if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
 
-        setPosition({ x: newX, y: newY });
+        setPosition({ x: newX, y: newY }); // Allow y position to change
         setWasDragged(true);
 
         e.stopPropagation();
@@ -241,7 +241,7 @@ const FloatingAudioPlayer = () => {
         if (newX > window.innerWidth - (isExpanded ? 420 : 48)) newX = window.innerWidth - (isExpanded ? 420 : 48); // Adjust width as needed
         if (newY > window.innerHeight - 48) newY = window.innerHeight - 48; // Adjust height as needed
 
-        setPosition({ x: newX, y: newY });
+        setPosition({ x: newX, y: newY }); // Allow y position to change
         setWasDragged(true);
 
         e.stopPropagation();
@@ -268,7 +268,7 @@ const FloatingAudioPlayer = () => {
         const handleScroll = () => {
             setPosition((prevPosition) => ({
                 ...prevPosition,
-                y: window.innerHeight - 96
+                y: window.innerHeight - 96 + window.scrollY // Adjust top position based on scroll
             }));
         };
 
