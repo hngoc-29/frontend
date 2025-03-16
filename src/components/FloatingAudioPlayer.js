@@ -4,6 +4,7 @@ import { PlayArrow, Pause, SkipPrevious, SkipNext, Close, OpenInFull } from '@mu
 import { useEffect, useState, useRef } from 'react';
 import { useAudio } from '../context/AudioContext';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const FloatingAudioPlayer = () => {
     const router = useRouter();
@@ -306,15 +307,17 @@ const FloatingAudioPlayer = () => {
             style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'absolute', clipPath: 'inset(0)' }}
         >
             <button onClick={(e) => handleToggleExpand(e)} className={`z-10 ${!isExpanded ? `p-0` : `ml-2`}`} aria-label="Toggle">
-                {isExpanded ? <Close className='mr-2 ml-[-4px]' /> : <img src={sings[currentIndex]?.image_url} alt="Open" className="z-20 w-[48px] h-[48px] rounded-full" />}
+                {isExpanded ? <Close className='mr-2 ml-[-4px]' /> : <Image src={`/api/proxy-image?url=${encodeURIComponent(sings[currentIndex]?.image_url)}`} alt="Open" className="z-20 w-[48px] h-[48px] rounded-full" width={48} height={48} />}
             </button>
             {isExpanded && (
                 <>
                     <div className="mr-4">
-                        <img
-                            src={sings[currentIndex]?.image_url}
+                        <Image
+                            src={`/api/proxy-image?url=${encodeURIComponent(sings[currentIndex]?.image_url)}`}
                             alt={sings[currentIndex]?.singname}
                             className="w-12 h-12 rounded-full"
+                            width={48}
+                            height={48}
                             loading="lazy"
                         />
                     </div>

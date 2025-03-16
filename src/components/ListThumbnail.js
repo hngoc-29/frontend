@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   useEffect,
   useContext
@@ -43,8 +44,8 @@ const ListThumbnail = () => {
           <div key={item._id} className='cursor-pointer group relative flex flex-col my-2 bg-white shadow-sm border border-slate-200 rounded-lg max-w-50 hover:shadow-lg transition-shadow duration-300 select-none'>
             <Link href={item.description !== `fullsings` ? `/${item._id}` : `/all`}>
               <div className='relative h-40 overflow-hidden text-white rounded-t-lg'>
-                <img className='transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110 w-full h-full object-cover'
-                  src={item.image_url} alt={item.title} />
+                <Image className='transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110 w-full h-full object-cover'
+                  src={`/api/proxy-image?url=${encodeURIComponent(item.image_url)}`} alt={item.title} layout='fill' objectFit='cover' />
               </div>
               <div className='p-2 pb-0'>
                 <h6 className='mb-2 text-slate-800 text-xl font-semibold'>{item.title}</h6>

@@ -4,6 +4,7 @@ import { useToast } from '../../context/Toast';
 import { UserContext } from '../../context/UserContext';
 import { getUserInfo } from '../utils/getUserInfo';
 import { checkToken } from '../../components/TokenRefresher';
+import Image from 'next/image';
 
 export default function Modal({ isOpen, onClose, content }) {
   const { addToast } = useToast();
@@ -107,7 +108,15 @@ export default function Modal({ isOpen, onClose, content }) {
                 className="w-full p-2 mb-2 border border-gray-300 rounded-lg"
                 disabled={isLoading}
               />
-              {selectedImage && <img src={selectedImage} alt="Selected" className="w-32 h-32 rounded-full mx-auto" />}
+              {selectedImage && (
+                <Image
+                  src={selectedImage}
+                  alt="Selected"
+                  width={128}
+                  height={128}
+                  className="w-32 h-32 rounded-full mx-auto"
+                />
+              )}
             </>
           ) : (
             <input

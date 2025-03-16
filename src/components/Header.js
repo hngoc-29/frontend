@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link';
+import Image from 'next/image';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { UserContext } from '../context/UserContext';
 import { loadingContext } from '../context/Loading';
@@ -63,7 +64,7 @@ const Header = () => {
       <header className='fixed top-0 left-0 right-0 h-[60px] shadow-sm flex items-center justify-between px-[20px] z-50 bg-white'>
         <div>
           <Link href='/'>
-            <img alt='logo' className='w-8' src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1200px-Vitejs-logo.svg.png' />
+            <Image alt='logo' className='w-8' src={`/api/proxy-image?url=${encodeURIComponent(`https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1200px-Vitejs-logo.svg.png`)}`} width={32} height={32} />
           </Link>
         </div>
         {!user._id ? (
@@ -74,12 +75,12 @@ const Header = () => {
           </div>
         ) : (
           <div className='relative' ref={menuRef}>
-            <img alt='menu' onClick={() => setShowMenu(!showMenu)} src={user.avata} className='cursor-pointer h-12 w-12 rounded-[50%]' />
+            <Image alt='menu' onClick={() => setShowMenu(!showMenu)} src={`/api/proxy-image?url=${encodeURIComponent(user.avata)}`} className='cursor-pointer h-12 w-12 rounded-[50%]' width={48} height={48} />
             {showMenu && (
               <div className='fixed mt-[2px] right-6 px-5 pt-5 rounded-lg bg-white shadow shadow-[rgba(0,0,0,0.1)]'>
                 <div>
                   <div className='flex pr-4 select-none'>
-                    <img src={user.avata} className='w-14 h-14 rounded-[50%]' />
+                    <Image alt='user avatar' src={`/api/proxy-image?url=${encodeURIComponent(user.avata)}`} className='w-14 h-14 rounded-[50%]' width={56} height={56} />
                     <div className='ml-5'>
                       <h3 className='font-bold text-lg'>{user.fullname}</h3>
                       <span className='text-[#666]'>@{user.username}</span>

@@ -1,12 +1,11 @@
 'use client'
 import { useEffect, useContext, useState } from "react";
-import {
-  useRouter
-} from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { UserContext } from "../../context/UserContext";
 import { ChevronRightIcon } from '@heroicons/react/solid'; // Importing Heroicons
 import Modal from "./Modal"; // Importing Modal for personal information
 import Modal2 from "./Modal2"; // Importing Modal2 for security-related information
+import Image from 'next/image'; // Importing next/image
 
 export default function Settings() {
   const { user } = useContext(UserContext);
@@ -85,7 +84,7 @@ export default function Settings() {
               >
                 <div>
                   <h2 className="text-lg font-semibold mb-2">Ảnh đại diện</h2>
-                  <img src={user?.avata} alt="avatar" className="w-16 h-16 rounded-full" />
+                  <Image src={`/api/proxy-image?url=${encodeURIComponent(user?.avata)}`} alt="avatar" className="w-16 h-16 rounded-full" width={64} height={64} />
                 </div>
                 <ChevronRightIcon className="w-5 h-5" />
               </section>
