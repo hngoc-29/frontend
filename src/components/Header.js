@@ -63,7 +63,7 @@ const Header = () => {
       <header className='fixed top-0 left-0 right-0 h-[60px] shadow-sm flex items-center justify-between px-[20px] z-50 bg-white'>
         <div>
           <Link href='/'>
-            <img className='w-8' src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1200px-Vitejs-logo.svg.png' />
+            <img alt='logo' className='w-8' src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1200px-Vitejs-logo.svg.png' />
           </Link>
         </div>
         {!user._id ? (
@@ -74,7 +74,7 @@ const Header = () => {
           </div>
         ) : (
           <div className='relative' ref={menuRef}>
-            <img onClick={() => setShowMenu(!showMenu)} src={user.avata} className='cursor-pointer h-12 w-12 rounded-[50%]' />
+            <img alt='menu' onClick={() => setShowMenu(!showMenu)} src={user.avata} className='cursor-pointer h-12 w-12 rounded-[50%]' />
             {showMenu && (
               <div className='fixed mt-[2px] right-6 px-5 pt-5 rounded-lg bg-white shadow shadow-[rgba(0,0,0,0.1)]'>
                 <div>
