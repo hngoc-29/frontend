@@ -33,15 +33,13 @@ const Header = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = document.cookie;
-      console.log(token.includes('refresh_token'));
-      if (!token.includes('refresh_token')) {
-        setLoading(false);
-        return;
-      }
       try {
         // Wait for token refresh if needed
-        await checkToken();
+        const isToken = await checkToken();
+        if (!isToken) {
+          setLoading(false);
+          return;
+        }
         const response = await fetch('/api/user/get-user');
         if (!response.ok) {
           throw new Error('Failed to fetch user');

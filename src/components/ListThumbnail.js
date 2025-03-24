@@ -50,7 +50,7 @@ const ListThumbnail = () => {
       <div className='mt-5 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
         {thumbnail.map(item => (
           <div key={item._id} className='cursor-pointer group relative flex flex-col my-2 bg-white shadow-sm border border-slate-200 rounded-lg max-w-50 hover:shadow-lg transition-shadow duration-300 select-none'>
-            <Link href={item.description !== `fullsings` ? `/${item._id}` : `/all`} onClick={() => {
+            <Link href={`danh-sach-phat${item.description !== `fullsings` ? `/${item._id}` : `/all`}`} onClick={() => {
               // Save the current scroll position before navigating
               sessionStorage.setItem('scrollPosition', window.scrollY);
               window.scrollTo(0, 0);
@@ -78,7 +78,7 @@ const ListThumbnail = () => {
           </div>
         ))}
       </div>
-    </div>
+    </div >
   );
 }
 export default ListThumbnail;

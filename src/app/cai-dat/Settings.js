@@ -19,11 +19,10 @@ export default function Settings() {
     setActiveLink(link);
   };
   useEffect(() => {
-    const isToken = document.cookie.split('; ').find(row => row.startsWith('access_token'));
-    if (!isToken) {
+    if (!user._id) {
       router.push('/dang-nhap');
     }
-  })
+  }, [user._id]);
   const handleSectionClick = (content, isSecurity = false) => {
     setModalContent(content);
     setIsLoading(true);

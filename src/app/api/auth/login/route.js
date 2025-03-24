@@ -47,10 +47,16 @@ export async function POST(req) {
     res.cookies.set('access_token', access_token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true
     });
     res.cookies.set('refresh_token', refresh_token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: true
     });
     return res;
   } catch (error) {

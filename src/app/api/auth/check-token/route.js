@@ -5,8 +5,11 @@ export async function POST(request) {
     const accessToken = await cookieStore.get('access_token')?.value;
     const refreshToken = await cookieStore.get('refresh_token')?.value;
 
+    if (!accessToken && !refreshToken) {
+        return new Response(JSON.stringify({ refresh: false, isToken: false }), { status: 200 });
+    }
     if (!accessToken && refreshToken) {
-        return new Response(JSON.stringify({ refresh: true }), { status: 200 });
+        return new Response(JSON.stringify({ refresh: true, isToken: true }), { status: 200 });
     }
 
     if (accessToken) {
@@ -14,11 +17,11 @@ export async function POST(request) {
         const tokenExpiry = decodeToken.exp * 1000;
         const timeLeft = tokenExpiry - Date.now();
         if (timeLeft < 60 * 60 * 1000) {
-            return new Response(JSON.stringify({ refresh: true }), { status: 200 });
+            return new Response(JSON.stringify({ refresh: true, isToken: true }), { status: 200 });
         }
     }
 
-    return new Response(JSON.stringify({ refresh: false }), { status: 200 });
+    return new Response(JSON.stringify({ refresh: false, isToken: true }), { status: 200 });
 }
 
 // Hàm để parse JWT và lấy thời gian hết hạn

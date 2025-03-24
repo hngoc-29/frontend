@@ -46,7 +46,6 @@ export default function Modal2({ isOpen, onClose, content }) {
         const response = await fetch('/api/user/updatePassword', {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${document.cookie.split('; ').find(row => row.startsWith('access_token')).split('=')[1]}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ id: content.id, passIn: currentPassword, password: newPassword }),
@@ -72,7 +71,6 @@ export default function Modal2({ isOpen, onClose, content }) {
         const response = await fetch('/api/user/newCode', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${document.cookie.split('; ').find(row => row.startsWith('access_token')).split('=')[1]}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ id: content.id }),

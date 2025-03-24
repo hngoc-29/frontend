@@ -28,6 +28,7 @@ export async function checkToken() {
     if (data.refresh) {
       await refreshToken();
     }
+    return data.isToken;
   } else {
     console.error('Failed to check token:', response.statusText);
   }

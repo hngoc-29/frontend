@@ -49,7 +49,7 @@ export default function Modal({ isOpen, onClose, content }) {
       response = await fetch('/api/user/updateUser', {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${document.cookie.split('; ').find(row => row.startsWith('access_token')).split('=')[1]}`,
+          'Content-Type': 'application/json',
         },
         body: formData,
       });
