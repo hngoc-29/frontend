@@ -1,34 +1,35 @@
 'use client';
 import { useEffect } from 'react';
 
-async function refreshToken(decodeToken) {
+async function refreshToken() {
   const response = await fetch('/api/auth/refresh-token', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'id': decodeToken._id,
     },
   });
   if (response.ok) {
     const data = await response.json();
-    document.cookie = `access_token=${data.access_token}; path=/;`;
-    document.cookie = `refresh_token=${data.refresh_token}; path=/;`;
     return `access_token=${data.access_token}`;
   }
   return null;
 }
 
 export async function checkToken() {
-  let accessToken = document.cookie.split('; ').find(row => row.startsWith('access_token='));
+  const response = await fetch('/api/auth/check-token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
-  if (accessToken) {
-    let tokenValue = accessToken.split('=')[1];
-    let decodeToken = parseJwt(tokenValue);
-    let tokenExpiry = decodeToken.exp * 1000; // Giả sử token là JWT và có trường `exp`
-    let timeLeft = tokenExpiry - Date.now();
-    if (timeLeft < 60 * 60 * 1000) {
-      accessToken = await refreshToken(decodeToken);
+  if (response.ok) {
+    const data = await response.json();
+    if (data.refresh) {
+      await refreshToken();
     }
+  } else {
+    console.error('Failed to check token:', response.statusText);
   }
 }
 

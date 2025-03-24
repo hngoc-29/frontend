@@ -34,7 +34,8 @@ const Header = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = document.cookie;
-      if (!(token.startsWith('access_token') || token.startsWith('refresh_token'))) {
+      console.log(token.includes('refresh_token'));
+      if (!token.includes('refresh_token')) {
         setLoading(false);
         return;
       }
@@ -48,6 +49,7 @@ const Header = () => {
         const data = await response.json();
         setUser(data);
       } catch (err) {
+        console.error(err);
         addToast({ type: 'error', title: 'Lỗi', description: 'Không thể lấy thông tin người dùng' });
       }
       setLoading(false);

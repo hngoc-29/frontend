@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 export async function POST(request) {
   const cookieStore = await cookies();
   const refreshToken = await cookieStore.get('refresh_token')?.value;
+  console.log(refreshToken);
   if (!refreshToken) {
     return new Response(JSON.stringify({ error: 'Không có refresh Token' }), { status: 401 });
   }
@@ -17,7 +18,7 @@ export async function POST(request) {
 
   if (!response.ok) {
     const res = await response.json();
-    return new Response(JSON.stringify({ error: 'Unable to refresh tokens' }), { status: 403 });
+    return new Response(JSON.stringify(res), { status: response.status });
   }
 
   const newTokens = await response.json();

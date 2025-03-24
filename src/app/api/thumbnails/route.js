@@ -1,7 +1,6 @@
 // app/api/user-info/route.js
-import {
-  NextResponse
-} from 'next/server';
+import { NextResponse } from 'next/server';
+
 export async function GET(request) {
   try {
     // Gọi API bên ngoài để lấy thông tin người dùng
