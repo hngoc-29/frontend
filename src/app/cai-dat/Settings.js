@@ -18,11 +18,6 @@ export default function Settings() {
   const handleLinkClick = (link) => {
     setActiveLink(link);
   };
-  useEffect(() => {
-    if (!user._id) {
-      router.push('/dang-nhap');
-    }
-  }, [user._id]);
   const handleSectionClick = (content, isSecurity = false) => {
     setModalContent(content);
     setIsLoading(true);

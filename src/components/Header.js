@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState, useRef } from 'react';
 import { UserContext } from '../context/UserContext';
 import { loadingContext } from '../context/Loading';
@@ -17,6 +18,7 @@ const Header = () => {
   const menuRef = useRef(null);
   const element = [{ title: 'Cài đặt', path: '/cai-dat' }];
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -32,11 +34,18 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
+    const checkPath = () => {
+      if (pathname.includes('/quan-ly') || pathname.includes('/cai-dat') || pathname.includes('/danh-sach-phat')) {
+        router.push('/');
+      }
+    }
     const fetchUser = async () => {
       try {
         // Wait for token refresh if needed
         const isToken = await checkToken();
         if (!isToken) {
+          checkPath();
+          setUser({});
           setLoading(false);
           return;
         }
@@ -47,6 +56,8 @@ const Header = () => {
         const data = await response.json();
         setUser(data);
       } catch (err) {
+        checkPath();
+        setUser({});
         console.error(err);
         addToast({ type: 'error', title: 'Lỗi', description: 'Không thể lấy thông tin người dùng' });
       }
