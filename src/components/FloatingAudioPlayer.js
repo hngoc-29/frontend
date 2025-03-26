@@ -285,7 +285,7 @@ const FloatingAudioPlayer = () => {
     const handleClick = (e) => {
         if (!wasDragged && isExpanded) {
             setIsExpanded(false);
-            router.back();
+            router.push(`/danh-sach-phat/${globalAudioState.id}`);
         }
     };
 
