@@ -24,11 +24,11 @@ const ResetPassWord = () => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const tokenFromUrl = new URLSearchParams(window.location.search).get("token");
-      setToken(tokenFromUrl);
+    if (typeof window !== 'undefined') {
+      setToken(new URLSearchParams(window.location.search).get('token'));
     }
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);

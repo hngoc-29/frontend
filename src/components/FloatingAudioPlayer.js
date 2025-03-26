@@ -154,7 +154,7 @@ const FloatingAudioPlayer = () => {
         if (titleCurrent && document.title !== titleCurrent) {
             document.title = titleCurrent;
         }
-    }, [document.title, titleCurrent, pathname]);
+    }, [titleCurrent, pathname]);
 
     useEffect(() => {
         if (sings && sings[currentIndex] && sings[currentIndex]._id) {
@@ -185,7 +185,7 @@ const FloatingAudioPlayer = () => {
     useEffect(() => {
         if (audioRef.current) {
             const currentSongUrl = sings[currentIndex]?.audio_url;
-            if (audioRef.current.src !== currentSongUrl) {
+            if (audioRef.current.src !== currentSongUrl && sings.length) {
                 audioRef.current.src = currentSongUrl;
                 audioRef.current.play().catch(error => {
                     console.error("Không thể phát audio:", error);

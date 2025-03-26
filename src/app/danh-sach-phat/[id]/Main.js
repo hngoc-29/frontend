@@ -30,10 +30,12 @@ const Main = ({ id }) => {
     // Đảm bảo currentIndex được khởi tạo từ URL params trước tiên
     const [isPlaying, setIsPlaying] = useState(globalAudioState.isPlaying);
     const [isRandom, setIsRandom] = useState(() => {
+        if (typeof window === `undefined`) return false;
         const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
         return savedConfig.isRandom === true; // Khôi phục từ localStorage
     });
     const [isRepeat, setIsRepeat] = useState(() => {
+        if (typeof window === `undefined`) return false;
         const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
         return savedConfig.isRepeat === true; // Khôi phục từ localStorage
     });
@@ -53,7 +55,7 @@ const Main = ({ id }) => {
 
     // Ẩn thanh cuộn và bottom navigation khi component mount
     useEffect(() => {
-        if (typeof window !== undefined) {
+        if (typeof window !== `undefined`) {
             document.body.style.overflow = "hidden";
             const bottomNav = document.querySelector(".bottom-nav");
             if (bottomNav) {
@@ -81,10 +83,10 @@ const Main = ({ id }) => {
             }
         };
 
-        if (typeof window !== undefined) window.addEventListener('beforeunload', handleBeforeUnload);
+        if (typeof window !== `undefined`) window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
-            if (typeof window !== undefined) window.removeEventListener('beforeunload', handleBeforeUnload);
+            if (typeof window !== `undefined`) window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [audioRef]);
 
@@ -115,7 +117,7 @@ const Main = ({ id }) => {
                 if (previousIndex.current !== currentIndex) {
                     loadCurrentSong();
                     scrollToCurrentSong(currentIndex);
-                    if (audioRef.current) {
+                    if (audioRef.current && sings[currentIndex] && sings[currentIndex].audio_url) {
                         audioRef.current.src = sings[currentIndex].audio_url; // Cập nhật src
                         audioRef.current.play().catch(error => {
                             console.error("Không thể phát audio:", error);
@@ -147,6 +149,7 @@ const Main = ({ id }) => {
                 }
                 setSings(data.Sings);
             } catch (error) {
+                setSings([]);
                 addToast({
                     type: "error",
                     title: "Lỗi tải dữ liệu",
@@ -159,7 +162,8 @@ const Main = ({ id }) => {
 
     // Load cấu hình player từ localStorage khi component mount
     useEffect(() => {
-        const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
+        if (typeof window === `undefined`) return
+        const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || null;
         if (savedConfig) {
             setIsRandom(savedConfig.isRandom || false);
             setIsRepeat(savedConfig.isRepeat || false);
@@ -189,7 +193,7 @@ const Main = ({ id }) => {
             isRandom,
             isRepeat
         };
-        if (typeof window !== undefined) localStorage.setItem("playerConfig", JSON.stringify(config));
+        if (typeof window !== `undefined`) localStorage.setItem("playerConfig", JSON.stringify(config));
     }, [currentIndex, isRandom, isRepeat]);
 
     // Thêm useEffect để ngăn chặn việc cập nhật currentIndex không hợp lệ từ globalAudioState
@@ -336,7 +340,7 @@ const Main = ({ id }) => {
             isRandom: newRandomState,
             isRepeat
         };
-        if (typeof window !== undefined) localStorage.setItem("playerConfig", JSON.stringify(config));
+        if (typeof window !== `undefined`) localStorage.setItem("playerConfig", JSON.stringify(config));
     };
 
     const toggleRepeat = () => {
@@ -347,7 +351,7 @@ const Main = ({ id }) => {
             isRandom,
             isRepeat: newRepeatState
         };
-        if (typeof window !== undefined) localStorage.setItem("playerConfig", JSON.stringify(config));
+        if (typeof window !== `undefined`) localStorage.setItem("playerConfig", JSON.stringify(config));
     };
 
     const onAudioPlay = () => {
@@ -471,7 +475,7 @@ const Main = ({ id }) => {
 
     // Đồng bộ audioRef với globalAudioState
     useEffect(() => {
-        if (audioRef.current) {
+        if (audioRef.current && sings[currentIndex] && sings[currentIndex].audio_url) {
             if (globalAudioState.isPlaying) {
                 audioRef.current.play().catch(error => {
                     console.error("Không thể phát audio:", error);
@@ -521,15 +525,16 @@ const Main = ({ id }) => {
                 </div>
                 {/* Control */}
                 <div className="flex justify-around items-center py-2">
-                    <button className="text-gray-600 p-4" onClick={toggleRepeat}>
+                    <button className="text-gray-600 p-4" onClick={toggleRepeat} aria-label="Toggle Repeat">
                         <Repeat fontSize="medium" className={`${isRepeat ? "text-red-500" : ""}`} />
                     </button>
-                    <button className="text-gray-600 p-4 prev-button" onClick={handlePrev}>
+                    <button className="text-gray-600 p-4 prev-button" onClick={handlePrev} aria-label="Previous Song">
                         <SkipPrevious fontSize="medium" />
                     </button>
                     <button
                         className="bg-[#EC1F55] text-white w-[40px] h-[40px] rounded-full flex items-center justify-center"
                         onClick={handlePlayPause}
+                        aria-label={isPlaying ? "Pause" : "Play"}
                     >
                         {isPlaying ? (
                             <Pause fontSize="medium" />
@@ -537,10 +542,10 @@ const Main = ({ id }) => {
                             <PlayArrow fontSize="medium" />
                         )}
                     </button>
-                    <button className="text-gray-600 p-4 next-button" onClick={handleNext}>
+                    <button className="text-gray-600 p-4 next-button" onClick={handleNext} aria-label="Next Song">
                         <SkipNext fontSize="medium" />
                     </button>
-                    <button className="text-gray-600 p-4" onClick={toggleRandom}>
+                    <button className="text-gray-600 p-4" onClick={toggleRandom} aria-label="Toggle Shuffle">
                         <Shuffle fontSize="medium" className={`${isRandom ? "text-red-500" : ""}`} />
                     </button>
                 </div>
@@ -564,7 +569,7 @@ const Main = ({ id }) => {
                 {sings.map((sing, index) => (
                     <div
                         key={sing._id + index}
-                        className={`flex items-center p-4 mb-3 rounded-lg shadow cursor-pointer ${index === currentIndex ? "bg-[#EC1F55] text-white" : "bg-white"
+                        className={`flex items-center p-4 mb-3 rounded-lg shadow cursor-pointer ${index === currentIndex ? "bg-[#C21845] text-white" : "bg-gray-100 text-gray-800"
                             }`}
                         onClick={() => handleSongClick(index)}
                     >
