@@ -1,24 +1,20 @@
 import Main from './Main';
 
-let thumbnailsCache = null;
-
 async function fetchThumbnails(id) {
-    if (!thumbnailsCache) {
-        const res = await fetch(`${process.env.BASE_URL}/api/thumbnails`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                id: id,
-            },
-        });
-        try {
-            thumbnailsCache = await res.json();
-        } catch (error) {
-            console.error("Không thể phân tích phản hồi JSON:", error);
-            return null;
-        }
+    const res = await fetch(`${process.env.BASE_URL}/api/thumbnails`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            id: id,
+        },
+    });
+    try {
+        const data = await res.json();
+        return data?.thumbnail || null;
+    } catch (error) {
+        console.error("Không thể phân tích phản hồi JSON:", error);
+        return null;
     }
-    return thumbnailsCache?.thumbnail || null;
 }
 
 export async function generateMetadata({ params }) {
