@@ -48,9 +48,7 @@ export default function Modal({ isOpen, onClose, content }) {
 
       response = await fetch('/api/user/updateUser', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        // Removed 'Content-Type' header to let the browser set it automatically
         body: formData,
       });
 

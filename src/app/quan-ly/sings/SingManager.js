@@ -47,7 +47,7 @@ const SingManager = () => {
             const data = await response.json();
             setSings(data.Sings);
         } catch (error) {
-            console.error('Không thể lấy dữ liệu sings', error);
+            console.error('Không thể lấy dữ liệu Nhạc', error);
         } finally {
             setLoading(false);
         }
@@ -125,7 +125,7 @@ const SingManager = () => {
                 body: formData,
             });
             if (response.ok) {
-                addToast({ type: 'success', title: 'Thành công', description: editMode ? 'Cập nhật sing thành công' : 'Tạo sing thành công' });
+                addToast({ type: 'success', title: 'Thành công', description: editMode ? 'Cập nhật nhạc thành công' : 'Tạo nhạc thành công' });
                 fetchSings(selectedThumbnail);
                 handleCloseDialog();
             } else {
@@ -244,7 +244,7 @@ const SingManager = () => {
                 </Table>
             </TableContainer>
             <Dialog open={open} onClose={handleCloseDialog}>
-                <DialogTitle>{editMode ? 'Cập nhật Sing' : 'Thêm Sing'}</DialogTitle>
+                <DialogTitle>{editMode ? 'Cập nhật Nhạc' : 'Thêm Nhạc'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

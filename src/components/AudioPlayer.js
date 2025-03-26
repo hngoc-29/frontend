@@ -64,10 +64,10 @@ const AudioPlayer = ({ progressRef }) => {
             }
         };
 
-        window.addEventListener('beforeunload', handleBeforeUnload);
+        if (typeof window !== undefined) window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
+            if (typeof window !== undefined) window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [audioRef]);
 

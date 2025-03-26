@@ -1,6 +1,6 @@
 'use client'
 import {
-  useState
+  useState, useEffect
 } from 'react';
 import {
   useRouter
@@ -9,6 +9,7 @@ import InfoEmty from '../../../components/ui/InfoEmty';
 import {
   useToast
 } from '../../../context/Toast';
+export const dynamic = "force-dynamic";
 const ResetPassWord = () => {
   const { addToast } = useToast();
   const router = useRouter();
@@ -20,12 +21,19 @@ const ResetPassWord = () => {
     setIsSubmit] = useState(false);
   const [isMatch,
     setIsMatch] = useState(true);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const tokenFromUrl = new URLSearchParams(window.location.search).get("token");
+      setToken(tokenFromUrl);
+    }
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
     password === submitPassword ? setIsMatch(true) : setIsMatch(false);
     if (!isMatch) return;
-    const token = new URLSearchParams(window.location.search).get('token');
     const res = await fetch('/api/user/reset-password', {
       method: 'POST',
       headers: {

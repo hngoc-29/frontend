@@ -15,7 +15,7 @@ export async function GET(request) {
     const accessToken = (await cookies()).get('access_token')?.value;
     const { searchParams } = new URL(request.url);
     const parent = searchParams.get('parent');
-    const plusview = searchParams.get('plusview') === "true";
+    const plusview = request.headers.get('plusview');
     const response = await fetch(`${BACKEND_SERVER_URL}/get/${parent}?plusview=${plusview}`, {
         headers: {
             'Authorization': `Bearer ${accessToken}`,

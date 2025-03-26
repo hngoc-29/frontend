@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import {
     PlayArrow,
@@ -20,10 +19,10 @@ import { useAudio } from '../../../context/AudioContext';
 
 const Main = ({ id }) => {
     const router = useRouter();
-    const searchParams = useSearchParams();
     const { addToast } = useToast();
     const { globalAudioState, setGlobalAudioState, audioRef } = useGlobalAudio();
     const { sings, setSings, currentIndex, setCurrentIndex } = useAudio();
+    const hasFetched = useRef(false);
 
     // Thêm ref để lưu trữ chỉ số bài hát trước đó
     const previousIndex = useRef(null);
@@ -54,13 +53,16 @@ const Main = ({ id }) => {
 
     // Ẩn thanh cuộn và bottom navigation khi component mount
     useEffect(() => {
-        document.body.style.overflow = "hidden";
-        const bottomNav = document.querySelector(".bottom-nav");
-        if (bottomNav) {
-            bottomNav.style.display = "none";
+        if (typeof window !== undefined) {
+            document.body.style.overflow = "hidden";
+            const bottomNav = document.querySelector(".bottom-nav");
+            if (bottomNav) {
+                bottomNav.style.display = "none";
+            }
         }
         return () => {
             document.body.style.overflow = "auto";
+            const bottomNav = document.querySelector(".bottom-nav");
             if (bottomNav) {
                 bottomNav.style.display = "flex";
             }
@@ -79,10 +81,10 @@ const Main = ({ id }) => {
             }
         };
 
-        window.addEventListener('beforeunload', handleBeforeUnload);
+        if (typeof window !== undefined) window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
+            if (typeof window !== undefined) window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [audioRef]);
 
@@ -127,11 +129,18 @@ const Main = ({ id }) => {
 
     // Lấy dữ liệu bài hát (ở đây sử dụng dữ liệu mẫu)
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
         if (!id) return;
         const fetchThumbnails = async () => {
             try {
                 await checkToken();
-                const response = await fetch(`/api/manager/sings?parent=${id}`);
+                const response = await fetch(`/api/manager/sings?parent=${id}`, {
+                    headers: {
+                        'plusview': id !== `all` ? true : false,
+                    },
+                    method: 'GET',
+                });
                 const data = await response.json();
                 if (!response.ok) {
                     throw new Error(data.message || "Fetch Error");
@@ -140,7 +149,7 @@ const Main = ({ id }) => {
             } catch (error) {
                 addToast({
                     type: "error",
-                    title: "Fetch Error",
+                    title: "Lỗi tải dữ liệu",
                     description: error.message,
                 });
             }
@@ -150,7 +159,7 @@ const Main = ({ id }) => {
 
     // Load cấu hình player từ localStorage khi component mount
     useEffect(() => {
-        const savedConfig = JSON.parse(localStorage.getItem("playerConfig"));
+        const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
         if (savedConfig) {
             setIsRandom(savedConfig.isRandom || false);
             setIsRepeat(savedConfig.isRepeat || false);
@@ -180,7 +189,7 @@ const Main = ({ id }) => {
             isRandom,
             isRepeat
         };
-        localStorage.setItem("playerConfig", JSON.stringify(config));
+        if (typeof window !== undefined) localStorage.setItem("playerConfig", JSON.stringify(config));
     }, [currentIndex, isRandom, isRepeat]);
 
     // Thêm useEffect để ngăn chặn việc cập nhật currentIndex không hợp lệ từ globalAudioState
@@ -327,7 +336,7 @@ const Main = ({ id }) => {
             isRandom: newRandomState,
             isRepeat
         };
-        localStorage.setItem("playerConfig", JSON.stringify(config));
+        if (typeof window !== undefined) localStorage.setItem("playerConfig", JSON.stringify(config));
     };
 
     const toggleRepeat = () => {
@@ -338,7 +347,7 @@ const Main = ({ id }) => {
             isRandom,
             isRepeat: newRepeatState
         };
-        localStorage.setItem("playerConfig", JSON.stringify(config));
+        if (typeof window !== undefined) localStorage.setItem("playerConfig", JSON.stringify(config));
     };
 
     const onAudioPlay = () => {
@@ -486,7 +495,7 @@ const Main = ({ id }) => {
     }, [audioRef]);
 
     if (sings.length === 0) {
-        return <div className="container mx-auto p-4">No songs available</div>;
+        return <div className="container mx-auto p-4">Không có bài hát nào</div>;
     }
 
     return (
@@ -495,9 +504,9 @@ const Main = ({ id }) => {
             {/* Dashboard */}
             <div className="fixed top-[60px] w-full max-w-[480px] bg-white border-b border-gray-200 p-2 z-20">
                 <header className="text-center mb-2">
-                    <h4 className="text-sm text-[#EC1F55]">Now playing:</h4>
+                    <h4 className="text-sm text-[#EC1F55]">Đang phát:</h4>
                     <h2 className="font-bold text-xl">
-                        {sings[currentIndex]?.singname || "Default Song"}
+                        {sings[currentIndex]?.singname || "Bài hát mặc định"}
                     </h2>
                 </header>
                 {/* CD */}

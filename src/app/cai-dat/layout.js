@@ -7,11 +7,11 @@ export const metadata = {
         title: "Cài đặt - App Nghe Nhạc",
         description:
             "Quản lý cài đặt, cấu hình và thông tin cá nhân trên App Nghe Nhạc.",
-        url: "https://your-music-app-domain.com/settings",
+        url: process.env.BASE_URL + "/cai-dat",
         siteName: "App Nghe Nhạc",
         images: [
             {
-                url: "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
+                url: "/images/thumbnail.jpg",
                 width: 1200,
                 height: 630,
                 alt: "Cài đặt App Nghe Nhạc",
@@ -26,10 +26,10 @@ export const metadata = {
         description:
             "Quản lý cài đặt, thông tin cá nhân và quyền riêng tư trên App Nghe Nhạc.",
         images: [
-            "https://thienvu.com.vn/image/catalog/top-ung-dung-nghe-nhac-thoa-thich-khong-can-mang/top-ung-dung-nghe-nhac-hay-nhat-hien-nay.jpg",
+            "/images/thumbnail.jpg",
         ],
     },
-    metadataBase: new URL("https://your-music-app-domain.com"),
+    metadataBase: new URL(process.env.BASE_URL),
 };
 
 export default function SettingsPage({ children }) {

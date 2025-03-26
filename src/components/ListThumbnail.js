@@ -25,7 +25,7 @@ const ListThumbnail = () => {
   useEffect(() => {
     const getThumbnail = async () => {
       await checkToken(); // Check and refresh token if needed
-      const res = await fetch('/api/thumbnails');
+      const res = await fetch('/api/manager/thumbnails');
       const thumbnails = await res.json();
       if (!thumbnails.success) return addToast({
         type: 'error',
@@ -57,7 +57,15 @@ const ListThumbnail = () => {
             }}>
               <div className='relative h-40 overflow-hidden text-white rounded-t-lg'>
                 <Image className='transition-transform duration-500 ease-[cubic-bezier(0.25, 1, 0.5, 1)] transform group-hover:scale-110 w-full h-full object-cover'
-                  src={`/api/proxy-image?url=${encodeURIComponent(item.image_url)}`} alt={item.title} layout='fill' objectFit='cover' />
+                  src={`/api/proxy-image?url=${encodeURIComponent(item.image_url)}`}
+                  alt={item.title}
+                  fill
+                  blurDataURL='/images/thumbnail.jpg'
+                  placeholder="blur"
+                  sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                  priority
+                  quality={100}
+                />
               </div>
               <div className='p-2 pb-0'>
                 <h6 className='mb-2 text-slate-800 text-xl font-semibold'>{item.title}</h6>

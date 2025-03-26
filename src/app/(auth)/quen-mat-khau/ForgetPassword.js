@@ -4,13 +4,17 @@ import {
 } from 'react';
 import InfoEmty from '../../../components/ui/InfoEmty';
 import { useToast } from '../../../context/Toast';
+
 const QuenMatKhau = () => {
   const { addToast } = useToast();
-  const [email,
-    setEmail] = useState('');
-  const [isSubmit,
-    setIsSubmit] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isSubmit, setIsSubmit] = useState(false);
   const [delay, setDelay] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Ensure the component is running on the client side
+  }, []);
 
   useEffect(() => {
     if (delay > 0) {
@@ -29,7 +33,7 @@ const QuenMatKhau = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email }),
-    })
+    });
     const data = await res.json();
     if (!data.success) {
       setIsSubmit(false);
@@ -46,6 +50,9 @@ const QuenMatKhau = () => {
     });
     setDelay(60); // Set delay to 60 seconds after API call
   };
+
+  if (!isClient) return null; // Prevent rendering on the server
+
   return (
     <div className='mx-5'>
       <h1 className='text-center font-bold text-3xl mt-[50px]'>Quên mật khẩu</h1>
@@ -63,5 +70,6 @@ const QuenMatKhau = () => {
       </form>
     </div>
   );
-}
+};
+
 export default QuenMatKhau;

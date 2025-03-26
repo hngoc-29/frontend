@@ -70,10 +70,10 @@ export const GlobalAudioProvider = ({ children }) => {
         // Đánh dấu tương tác người dùng khi có click vào document
         const handleUserInteraction = () => {
             hasUserInteracted.current = true;
-            document?.removeEventListener('click', handleUserInteraction);
+            document.removeEventListener('click', handleUserInteraction);
         };
 
-        document?.addEventListener('click', handleUserInteraction);
+        document.addEventListener('click', handleUserInteraction);
 
         // Khôi phục trạng thái từ session storage
         const restoreState = () => {
@@ -92,7 +92,7 @@ export const GlobalAudioProvider = ({ children }) => {
                     const isAudioActuallyPlaying = audioRef.current && !audioRef.current.paused;
                     const shouldPlay = (keepPlaying || savedIsPlaying || isPlaying) && !isAudioActuallyPlaying;
 
-                    const pathname = window?.location?.pathname || '';
+                    const pathname = window.location.pathname || '';
                     const isCorrectPage = id && pathname.includes(`/${id}`);
 
                     setGlobalAudioState(prev => ({
