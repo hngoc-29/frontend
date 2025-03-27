@@ -11,11 +11,8 @@ const DangXuat = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
   } catch (error) {
-    console.error('Fetch error:', error);
+    return;
   }
   return (
     <></>

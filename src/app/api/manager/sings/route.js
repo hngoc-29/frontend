@@ -11,6 +11,12 @@ async function parseFormData(request) {
     return request.formData();
 }
 
+export const config = {
+    api: {
+        bodyParser: false, // Tắt parsing mặc định
+    },
+};
+
 export async function GET(request) {
     const accessToken = (await cookies()).get('access_token')?.value;
     const { searchParams } = new URL(request.url);
@@ -25,20 +31,22 @@ export async function GET(request) {
         return new NextResponse(JSON.stringify({ error: 'Dung lượng file quá lớn' }), { status: 413 });
     }
     const data = await response.json();
-
     return new NextResponse(JSON.stringify(data), { status: response.status });
 }
 
 export async function POST(request) {
     const accessToken = (await cookies()).get('access_token')?.value;
+
     try {
-        const formData = await parseFormData(request);
+        // Dùng request.formData() nếu file nhỏ, hoặc parse thủ công nếu file lớn
+        const formData = await request.formData();
+
         const response = await fetch(`${BACKEND_SERVER_URL}/create`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },
-            body: formData,
+            body: formData, // Gửi nguyên formData
         });
 
         if (response.status === 413) {
@@ -46,27 +54,37 @@ export async function POST(request) {
         }
 
         const result = await response.json();
+
         return new NextResponse(JSON.stringify(result), { status: response.status });
     } catch (error) {
         if (error.message === 'Payload Too Large') {
             return new NextResponse(JSON.stringify({ error: 'Dung lượng file quá lớn' }), { status: 413 });
         }
-        throw error;
+
+        return new NextResponse(JSON.stringify({ error: error.message }), { status: 500 });
     }
 }
+
 
 export async function PUT(request) {
     const accessToken = (await cookies()).get('access_token')?.value;
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+
+    if (!id) {
+        return new NextResponse(JSON.stringify({ error: 'Thiếu ID' }), { status: 400 });
+    }
+
     try {
-        const formData = await parseFormData(request);
+        // Kiểm tra nếu request lớn thì cần parse formData
+        const formData = await request.formData();
+
         const response = await fetch(`${BACKEND_SERVER_URL}/update/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },
-            body: formData,
+            body: formData, // Gửi nguyên formData
         });
 
         if (response.status === 413) {
@@ -79,7 +97,7 @@ export async function PUT(request) {
         if (error.message === 'Payload Too Large') {
             return new NextResponse(JSON.stringify({ error: 'Dung lượng file quá lớn' }), { status: 413 });
         }
-        throw error;
+        return new NextResponse(JSON.stringify({ error: error.message }), { status: 500 });
     }
 }
 
