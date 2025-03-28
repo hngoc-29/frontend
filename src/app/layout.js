@@ -78,7 +78,7 @@ export default async function RootLayout({ children }) {
                 <Header />
                 <div className='maindiv py-[60px] bg-gray-100 text-gray-900'>
                   <ThumbnailProvider>
-                    <main className='overflow-auto'>{children}</main>
+                    <main className='overflow-auto  bg-gray-100'>{children}</main>
                   </ThumbnailProvider>
                 </div>
                 <GetPath>
