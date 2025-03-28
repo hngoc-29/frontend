@@ -50,3 +50,8 @@ body {
 .toast-exit {
   animation: slideOut 0.5s ease-in forwards;
 }
+
+.maindiv {
+  background-color: #ffffff;
+  color: #0a0a0a;
+}

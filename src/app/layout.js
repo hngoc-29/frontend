@@ -76,7 +76,7 @@ export default async function RootLayout({ children }) {
                 <Loading />
                 <TokenRefresher />
                 <Header />
-                <div className='py-[60px] bg-gray-100 text-gray-900'>
+                <div className='maindiv py-[60px] bg-gray-100 text-gray-900'>
                   <ThumbnailProvider>
                     <main className='overflow-auto'>{children}</main>
                   </ThumbnailProvider>
