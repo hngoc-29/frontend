@@ -68,7 +68,7 @@ export default async function RootLayout({ children }) {
     <html lang="vi" className="bg-gray-100 text-gray-900">
       <head>
       </head>
-      <body className={`${inter.className}`}>
+      <body className={`${inter.className} bg-gray-100 text-gray-900`}>
         <ToastProvider>
           <GlobalAudioProvider>
             <UserProvider>

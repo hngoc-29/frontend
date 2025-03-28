@@ -15,8 +15,7 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  @apply bg-gray-100 text-gray-900;
 }
 
 /*toast*/
