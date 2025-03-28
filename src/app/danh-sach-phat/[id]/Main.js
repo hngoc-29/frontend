@@ -588,7 +588,7 @@ const Main = ({ id }) => {
     }
 
     return (
-        <div className="relative max-w-[480px] mx-auto mt-[80px]">
+        <div className="relative max-w-[480px] mx-auto mt-[80px] bg-white">
             {open && (
                 <div
                     className="fixed inset-0 bg-transparent"
