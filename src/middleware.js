@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function middleware(req) {
-    const skipRoutes = (process.env.SKIP_ROUTES || "").split(" ");
+    const skipRoutes = (process.env.SKIP_ROUTES || "").split(",");
+    console.log(skipRoutes)
     if (req.nextUrl.pathname.startsWith("/api/") && !skipRoutes.some(route => req.nextUrl.pathname.startsWith(route))) {
         const host = req.headers.get("host");
         const referer = req.headers.get("referer") || "";
