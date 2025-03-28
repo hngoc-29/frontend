@@ -18,12 +18,14 @@ body {
   color: var(--foreground);
   background: var(--background);
 }
+
 /*toast*/
 @keyframes slideIn {
   0% {
     transform: translateX(100%);
     opacity: 0;
   }
+
   100% {
     transform: translateX(0);
     opacity: 1;
@@ -35,6 +37,7 @@ body {
     transform: translateX(0);
     opacity: 1;
   }
+
   100% {
     transform: translateX(100%);
     opacity: 0;

@@ -182,6 +182,16 @@ const FloatingAudioPlayer = () => {
             navigator.mediaSession.setActionHandler('nexttrack', handleNext);
         }
     }, [currentIndex, sings, handlePlayPause, handlePrev, handleNext]);
+
+    useEffect(() => {
+        if (sings && sings[currentIndex] && sings[currentIndex]._id) {
+            const newTitle = `${sings[currentIndex].singname} - ${sings[currentIndex].author}`;
+            if (document.title !== newTitle) {
+                document.title = newTitle;
+            }
+        }
+    }, [currentIndex, sings]);
+
     useEffect(() => {
         if (audioRef.current) {
             const currentSongUrl = sings[currentIndex]?.audio_url;
@@ -283,8 +293,7 @@ const FloatingAudioPlayer = () => {
     };
 
     const handleClick = (e) => {
-        if (!wasDragged && isExpanded) {
-            setIsExpanded(false);
+        if (!wasDragged && isExpanded && !e.target.closest('button')) {
             router.push(`/danh-sach-phat/${globalAudioState.id}`);
         }
     };
@@ -333,7 +342,7 @@ const FloatingAudioPlayer = () => {
     }
 
     // Vị trí hiển thị khác nhau tùy thuộc vào thiết bị
-    const positionClass = `fixed z-[1000] ${isExpanded ? `min-w-[280px] md:min-w-[320px] lg:min-w-[420px]` : `w-[48px] h-[48px]`} ${isExpanded ? `bg-white` : `bg-transparent`} p-${!isExpanded ? 0 : 4} shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player overflow-hidden`;
+    const positionClass = `fixed z-[1000] ${isExpanded ? `min-w-[280px] bg-gray-100 text-gray-900 md:min-w-[320px] lg:min-w-[420px]` : `w-[48px] h-[48px]`} ${isExpanded ? `bg-white` : `bg-transparent`} p-${!isExpanded ? 0 : 4} shadow-lg rounded-lg flex items-center cursor-pointer floating-audio-player overflow-hidden`;
 
     return (
         <div

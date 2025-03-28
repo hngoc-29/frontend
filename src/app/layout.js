@@ -9,7 +9,6 @@ import { LoadingProvider } from '../context/Loading';
 import { UserProvider } from '../context/UserContext';
 import { ThumbnailProvider } from '../context/Thumbnails';
 import { ToastProvider } from '../context/Toast';
-import StartServer from '../components/StartServer';
 import FloatingAudioPlayer from '../components/FloatingAudioPlayer';
 import { GlobalAudioProvider } from '../context/GlobalAudioContext';
 
@@ -66,19 +65,18 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   return (
-    <html lang="vi">
+    <html lang="vi" className="bg-gray-100 text-gray-900">
       <head>
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className}`}>
         <ToastProvider>
           <GlobalAudioProvider>
             <UserProvider>
               <LoadingProvider>
                 <Loading />
-                <StartServer />
                 <TokenRefresher />
                 <Header />
-                <div className='py-[60px]'>
+                <div className='py-[60px] bg-gray-100 text-gray-900'>
                   <ThumbnailProvider>
                     <main className='overflow-auto'>{children}</main>
                   </ThumbnailProvider>

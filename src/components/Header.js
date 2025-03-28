@@ -72,7 +72,7 @@ const Header = () => {
 
   return (
     <div>
-      <header className='fixed top-0 left-0 right-0 h-[60px] shadow-sm flex items-center justify-between px-[20px] z-50 bg-white'>
+      <header className='fixed top-0 left-0 right-0 h-[60px] shadow-sm flex items-center justify-between px-[20px] z-50 bg-white text-gray-900'>
         <div>
           <Link href='/'>
             <Image alt='logo' className='w-8' src={`/api/proxy-image?url=${encodeURIComponent(`https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/1200px-Vitejs-logo.svg.png`)}`} width={32} height={32} />

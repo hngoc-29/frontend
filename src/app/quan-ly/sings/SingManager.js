@@ -33,7 +33,7 @@ const SingManager = () => {
             const data = await response.json();
             setThumbnails(data.thumbnails);
         } catch (error) {
-            console.error('Không thể lấy dữ liệu thumbnails', error);
+            console.error('Không thể lấy dữ liệu hình thu nhỏ', error);
         } finally {
             setLoading(false);
         }
@@ -42,12 +42,12 @@ const SingManager = () => {
     const fetchSings = async (thumbnailId) => {
         setLoading(true);
         try {
-            await checkToken(); // Check and refresh token if needed
+            await checkToken(); // Kiểm tra và làm mới token nếu cần
             const response = await fetch(`/api/manager/sings?parent=${thumbnailId}`);
             const data = await response.json();
             setSings(data.Sings);
         } catch (error) {
-            console.error('Không thể lấy dữ liệu Nhạc', error);
+            console.error('Không thể lấy dữ liệu bài hát', error);
         } finally {
             setLoading(false);
         }
@@ -61,18 +61,18 @@ const SingManager = () => {
                 method: 'DELETE',
             });
             if (response.ok) {
-                addToast({ type: 'success', title: 'Thành công', description: 'Xóa sing thành công' });
+                addToast({ type: 'success', title: 'Thành công', description: 'Xóa bài hát thành công' });
                 fetchSings(selectedThumbnail);
             } else {
                 if (response.status === 413) {
                     addToast({ type: 'error', title: 'Thất bại', description: 'Dung lượng file quá lớn' });
                 } else {
-                    addToast({ type: 'error', title: 'Thất bại', description: 'Xóa sing thất bại' });
+                    addToast({ type: 'error', title: 'Thất bại', description: 'Xóa bài hát thất bại' });
                 }
             }
         } catch (error) {
-            console.error('Xóa sing thất bại', error);
-            addToast({ type: 'error', title: 'Thất bại', description: 'Xóa sing thất bại' });
+            console.error('Xóa bài hát thất bại', error);
+            addToast({ type: 'error', title: 'Thất bại', description: 'Xóa bài hát thất bại' });
         } finally {
             setLoading(false);
         }
@@ -173,7 +173,7 @@ const SingManager = () => {
     return (
         <Paper>
             <FormControl fullWidth margin="normal">
-                <InputLabel id="thumbnail-select-label">Chọn Thumbnail</InputLabel>
+                <InputLabel id="thumbnail-select-label">Chọn Hình Thumbnail</InputLabel>
                 <Select
                     labelId="thumbnail-select-label"
                     value={selectedThumbnail}
@@ -198,7 +198,7 @@ const SingManager = () => {
                             <TableCell>Tiêu đề</TableCell>
                             <TableCell>Nghệ sĩ</TableCell>
                             <TableCell>Hình ảnh</TableCell>
-                            <TableCell>Audio</TableCell>
+                            <TableCell>Âm thanh</TableCell>
                             <TableCell>Hành động</TableCell>
                         </TableRow>
                     </TableHead>
@@ -225,7 +225,7 @@ const SingManager = () => {
                                                 Your browser does not support the audio element.
                                             </audio>
                                             <button onClick={handlePlayPause} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-20">
-                                                Play
+                                                Phát
                                             </button>
                                         </div>
                                     </TableCell>
@@ -244,7 +244,7 @@ const SingManager = () => {
                 </Table>
             </TableContainer>
             <Dialog open={open} onClose={handleCloseDialog}>
-                <DialogTitle>{editMode ? 'Cập nhật Nhạc' : 'Thêm Nhạc'}</DialogTitle>
+                <DialogTitle>{editMode ? 'Cập nhật Bài Hát' : 'Thêm Bài Hát'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

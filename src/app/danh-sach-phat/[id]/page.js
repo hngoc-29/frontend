@@ -10,6 +10,7 @@ async function fetchThumbnails(id) {
     });
     try {
         const data = await res.json();
+        // console.log(res, data)
         return data?.thumbnail || null;
     } catch (error) {
         console.error("Không thể phân tích phản hồi JSON:", error);
@@ -20,8 +21,7 @@ async function fetchThumbnails(id) {
 export async function generateMetadata({ params }) {
     const { id } = await params;
     let thumbnail = {};
-    if (id) thumbnail = await fetchThumbnails(id) || {};
-
+    if (id && id != `all`) thumbnail = await fetchThumbnails(id) || {};
     return {
         title: thumbnail.title || "App Nghe Nhạc - Trải nghiệm âm nhạc trực tuyến",
         description: thumbnail.description || "Khám phá kho bài hát phong phú, giao diện hiện đại.",

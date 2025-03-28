@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const id = request.headers.get("id") || searchParams.get("id");
-  if (!id) {
+  if (!id || id === `all`) {
     return NextResponse.json(
       { error: "Thiếu tham số 'id'" },
       { status: 400 }
