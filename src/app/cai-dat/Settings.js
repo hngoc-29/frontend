@@ -6,6 +6,7 @@ import { ChevronRightIcon } from '@heroicons/react/solid'; // Importing Heroicon
 import Modal from "./Modal"; // Importing Modal for personal information
 import Modal2 from "./Modal2"; // Importing Modal2 for security-related information
 import Image from 'next/image'; // Importing next/image
+import VerifyCodeModal from "../../components/VerifyCodeModal";
 
 export default function Settings() {
   const { user } = useContext(UserContext);
@@ -15,6 +16,7 @@ export default function Settings() {
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const handleLinkClick = (link) => {
     setActiveLink(link);
   };
@@ -136,7 +138,8 @@ export default function Settings() {
         </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={closeModal} content={modalContent} isLoading={isLoading} />
-      <Modal2 isOpen={isModal2Open} onClose={closeModal2} content={modalContent} isLoading={isLoading} />
+      <Modal2 isOpen={isModal2Open} setIsOpen={setIsModal2Open} setIsVerifyModalOpen={setIsVerifyModalOpen} onClose={closeModal2} content={modalContent} isLoading={isLoading} />
+      {isVerifyModalOpen && <VerifyCodeModal isOpen={isVerifyModalOpen} onClose={() => setIsVerifyModalOpen(false)} userId={user._id} />}
     </div>
   );
 }

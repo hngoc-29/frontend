@@ -53,13 +53,13 @@ const RegisterForm = () => {
       return addToast({
         type: 'error',
         title: 'Đăng kí',
-        description: data || 'Có lỗi xảy ra'
+        description: data.message || 'Có lỗi xảy ra'
       });
     }
     addToast({
       type: 'success',
-      title: 'Đăng nhập',
-      description: data || 'Đăng kí thành công'
+      title: 'Đăng kí',
+      description: data.message || 'Đăng kí thành công'
     });
     router.push('/dang-nhap');
   };

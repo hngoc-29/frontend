@@ -1,17 +1,15 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../../context/Toast';
-import VerifyCodeModal from '../../components/VerifyCodeModal';
 import { checkToken } from '../../components/TokenRefresher';
 
-export default function Modal2({ isOpen, onClose, content }) {
+export default function Modal2({ isOpen, onClose, content, setIsOpen, setIsVerifyModalOpen }) {
   const { addToast } = useToast();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -94,6 +92,7 @@ export default function Modal2({ isOpen, onClose, content }) {
         });
 
         // Open the verify code modal
+        setIsOpen(false);
         setIsVerifyModalOpen(true);
       }
     } catch (error) {
@@ -173,7 +172,6 @@ export default function Modal2({ isOpen, onClose, content }) {
           </div>
         </div>
       </div>
-      {isVerifyModalOpen && <VerifyCodeModal isOpen={isVerifyModalOpen} onClose={() => setIsVerifyModalOpen(false)} userId={content.id} />}
     </>
   );
 }
