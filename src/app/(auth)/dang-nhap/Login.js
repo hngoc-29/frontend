@@ -31,6 +31,15 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
+
+    if (!email || !password) {
+      return addToast({
+        type: 'error',
+        title: 'Đăng nhập',
+        description: 'Vui lòng điền đầy đủ thông tin'
+      });
+    }
+
     const bodyData = {
       email,
       password

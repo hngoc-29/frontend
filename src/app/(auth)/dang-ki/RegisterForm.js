@@ -26,12 +26,21 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
+
+    if (!fullname || !username || !email || !password) {
+      return addToast({
+        type: 'error',
+        title: 'Đăng kí',
+        description: 'Vui lòng điền đầy đủ thông tin'
+      });
+    }
+
     const bodyData = {
       fullname,
       username,
       email,
       password,
-    }
+    };
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: {

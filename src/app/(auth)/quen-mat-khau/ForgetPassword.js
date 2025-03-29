@@ -27,6 +27,15 @@ const QuenMatKhau = () => {
     e.preventDefault();
     if (delay > 0) return; // Prevent API call if delay is greater than 0
     setIsSubmit(true);
+
+    if (!email) {
+      return addToast({
+        type: 'error',
+        title: 'Quên mật khẩu',
+        description: 'Vui lòng nhập email'
+      });
+    }
+
     const res = await fetch('/api/user/forget', {
       method: 'POST',
       headers: {

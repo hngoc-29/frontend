@@ -9,6 +9,7 @@ import InfoEmty from '../../../components/ui/InfoEmty';
 import {
   useToast
 } from '../../../context/Toast';
+import { jwtDecode } from 'jwt-decode';
 export const dynamic = "force-dynamic";
 const ResetPassWord = () => {
   const { addToast } = useToast();
@@ -22,18 +23,43 @@ const ResetPassWord = () => {
   const [isMatch,
     setIsMatch] = useState(true);
   const [token, setToken] = useState(null);
+  const [isTokenValid, setIsTokenValid] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setToken(new URLSearchParams(window.location.search).get('token'));
+      const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
+      setToken(tokenFromUrl);
+
+      try {
+        const decodedToken = jwtDecode(tokenFromUrl);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          setIsTokenValid(false);
+        }
+      } catch (error) {
+        setIsTokenValid(false);
+      }
     }
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
-    password === submitPassword ? setIsMatch(true) : setIsMatch(false);
-    if (!isMatch) return;
+
+    if (!password.trim() || !submitPassword.trim()) {
+      return addToast({
+        type: 'error',
+        title: 'Thay đổi mật khẩu',
+        description: 'Vui lòng điền đầy đủ thông tin'
+      });
+    }
+
+    if (password !== submitPassword) {
+      setIsMatch(false);
+      return;
+    }
+
+    setIsMatch(true);
+
     const res = await fetch('/api/user/reset-password', {
       method: 'POST',
       headers: {
@@ -57,6 +83,24 @@ const ResetPassWord = () => {
     });
     router.push('/dang-nhap');
   };
+
+  if (!isTokenValid) {
+    return (
+      <div className='flex flex-col items-center h-screen'>
+        <div className='text-center absolute top-44'>
+          <h1 className='text-2xl font-bold'>Token đã hết hạn.</h1>
+          <p className='mt-2'>Vui lòng gửi lại link.</p>
+          <button
+            className='mt-4 px-4 py-2 bg-blue-500 text-white rounded'
+            onClick={() => router.push('/quen-mat-khau')}
+          >
+            Quên Mật khẩu
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className='mx-5'>
       <h1 className='text-center font-bold text-3xl mt-[50px]'>Quên mật khẩu</h1>

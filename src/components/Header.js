@@ -66,9 +66,14 @@ const Header = () => {
     fetchUser();
   }, []);
 
-  if (user.role === 'Admin') {
+  if (user.role !== `Member`) {
     element.push({ title: 'Quản lý', path: '/quan-ly' });
   }
+
+  useEffect(() => {
+    setShowMenu(false);
+  }, [pathname])
+
 
   return (
     <div>

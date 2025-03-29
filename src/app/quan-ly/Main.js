@@ -11,7 +11,7 @@ export default function Main() {
     const router = useRouter();
 
     useEffect(() => {
-        if (user && user._id && user.role !== 'Admin') {
+        if (user && user._id && user.role === 'Member') {
             addToast({ type: 'error', title: 'Lỗi', description: 'Bạn không có quyền truy cập trang này' });
             router.push('/');
         }
