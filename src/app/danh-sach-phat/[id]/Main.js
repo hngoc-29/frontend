@@ -21,13 +21,28 @@ const Main = ({ id }) => {
     const router = useRouter();
     const { addToast } = useToast();
     const { globalAudioState, setGlobalAudioState, audioRef } = useGlobalAudio();
-    const { sings, setSings, currentIndex, setCurrentIndex } = useAudio();
+    const { sings, setSings } = useAudio();
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && sings.length > 0) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const singParam = urlParams.get("sing");
+            if (singParam !== null && Number(singParam) < sings.length && Number(singParam) >= 0) {
+                setCurrentIndex(parseInt(singParam, 10));
+            } else {
+                const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
+                setCurrentIndex(savedConfig.currentIndex || 0);
+            }
+        }
+    }, [sings, id]);
+
     const hasFetched = useRef(false);
 
     // Thêm ref để lưu trữ chỉ số bài hát trước đó
     const previousIndex = useRef(null);
 
-    // Đảm bảo currentIndex được khởi tạo từ URL params trước tiên
+    // Đảm bảo currentIndex được khởi tạo từ URL s tparamrước tiên
     const [isPlaying, setIsPlaying] = useState(globalAudioState.isPlaying);
     const [isRandom, setIsRandom] = useState(() => {
         if (typeof window === `undefined`) return false;
