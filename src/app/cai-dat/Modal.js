@@ -13,6 +13,8 @@ export default function Modal({ isOpen, onClose, content }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragCounter, setDragCounter] = useState(0);
 
   useEffect(() => {
     if (content && content.body) {
@@ -28,8 +30,56 @@ export default function Modal({ isOpen, onClose, content }) {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setSelectedImage(URL.createObjectURL(file));
-    setImageFile(file);
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file));
+      setImageFile(file);
+    }
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter((prev) => prev + 1);
+    if (!isDragging) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter((prev) => {
+      const newCounter = prev - 1;
+      if (newCounter <= 0) {
+        setIsDragging(false);
+        return 0;
+      }
+      return newCounter;
+    });
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    setDragCounter(0);
+
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedImage(URL.createObjectURL(file));
+      setImageFile(file);
+    } else {
+      addToast({
+        type: 'error',
+        title: 'Lỗi ảnh',
+        description: 'File không hợp lệ. Vui lòng kéo một file ảnh.'
+      });
+    }
   };
 
   const handleConfirm = async () => {
@@ -48,7 +98,6 @@ export default function Modal({ isOpen, onClose, content }) {
 
       response = await fetch('/api/user/updateUser', {
         method: 'PUT',
-        // Removed 'Content-Type' header to let the browser set it automatically
         body: formData,
       });
 
@@ -72,8 +121,6 @@ export default function Modal({ isOpen, onClose, content }) {
       // Fetch updated user data
       const userData = await getUserInfo();
       setUser(userData);
-
-      // Close the modal only if both update and fetch are successful
       onClose();
     } catch (error) {
       addToast({
@@ -88,7 +135,18 @@ export default function Modal({ isOpen, onClose, content }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-[100]">
+    <div
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-[100]"
+    >
+      {isDragging && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-75 z-[101] transition-opacity duration-300">
+          <p className="text-white text-lg">Thả ảnh vào đây</p>
+        </div>
+      )}
       <div className="bg-white p-5 rounded-lg shadow-lg w-1/2">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{content?.title}</h2>
