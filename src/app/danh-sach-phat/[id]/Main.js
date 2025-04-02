@@ -10,15 +10,12 @@ import {
     Shuffle,
     Repeat,
     MoreVert,
-    Download, // Import thêm biểu tượng Download
 } from "@mui/icons-material";
 import { useToast } from "../../../context/Toast";
 import { checkToken } from "../../../components/TokenRefresher";
 import { useGlobalAudio } from '../../../context/GlobalAudioContext';
 import AudioPlayer from '../../../components/AudioPlayer';
 import { useAudio } from '../../../context/AudioContext';
-import { Menu, MenuItem } from "@mui/material"; // Import thêm Menu và MenuItem từ Material-UI
-import { request } from "http";
 
 const Main = ({ id }) => {
     const router = useRouter();
@@ -276,7 +273,7 @@ const Main = ({ id }) => {
                 id
             }));
 
-            router.push(`${id}?sing=${currentIndex}`, undefined, { shallow: true });
+            router.replace(`${id}?sing=${currentIndex}`, undefined, { shallow: true });
 
             if (progressRef.current) {
                 progressRef.current.value = 0;
@@ -301,6 +298,9 @@ const Main = ({ id }) => {
                 setGlobalAudioState(prev => ({ ...prev, isPlaying: false }));
             } else {
                 const playPromise = audioRef.current.play();
+                if (globalAudioState && globalAudioState.currentSong && globalAudioState.currentSong._id) {
+                    document.title = globalAudioState.currentSong.singname + ` - ` + globalAudioState.currentSong.author;
+                }
                 if (playPromise) {
                     playPromise
                         .then(() => {
@@ -372,39 +372,6 @@ const Main = ({ id }) => {
             isRepeat: newRepeatState
         };
         if (typeof window !== `undefined`) localStorage.setItem("playerConfig", JSON.stringify(config));
-    };
-
-    const onAudioPlay = () => {
-        setIsPlaying(true);
-        // Cập nhật trạng thái global
-        setGlobalAudioState(prev => ({ ...prev, isPlaying: true }));
-    };
-
-    const onAudioPause = () => {
-        setIsPlaying(false);
-        // Cập nhật trạng thái global
-        setGlobalAudioState(prev => ({ ...prev, isPlaying: false }));
-    };
-
-    // Khi audio kết thúc, nếu chế độ repeat bật thì phát lại, ngược lại chuyển bài tiếp theo
-    const onAudioEnded = () => {
-        if (isRepeat) {
-            audioRef.current.currentTime = 0; // Reset thời gian về 0
-            audioRef.current.play(); // Phát lại bài hát
-        } else {
-            handleNext(); // Chuyển sang bài tiếp theo
-        }
-    };
-
-    // Cập nhật thanh tiến độ khi audio chạy
-    const onTimeUpdate = () => {
-        if (audioRef.current && progressRef.current) {
-            const progressPercent = Math.floor(
-                (audioRef.current.currentTime / audioRef.current.duration) * 100
-            );
-            progressRef.current.value = progressPercent;
-            progressRef.current.style.background = `linear-gradient(to right, #EC1F55 ${progressPercent}%, #d3d3d3 0%)`;
-        }
     };
 
     // Xử lý thay đổi thanh tiến độ khi người dùng kéo
@@ -518,89 +485,8 @@ const Main = ({ id }) => {
         };
     }, [audioRef]);
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const [menuSongIndex, setMenuSongIndex] = useState(null); // Thêm state để lưu index của bài hát trong menu
-
-    const handleMenuOpen = (event, index) => {
-        setAnchorEl(event.currentTarget);
-        setMenuSongIndex(index); // Lưu index của bài hát được chọn
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        // Không reset menuSongIndex để giữ lại bài hát đã chọn
-    };
-
-    const handleDownload = async () => {
-        if (menuSongIndex === null || !sings[menuSongIndex]?.audio_url) {
-            addToast({
-                type: "error",
-                title: "Lỗi tải xuống",
-                description: "Không tìm thấy URL của bài hát.",
-            });
-            return;
-        }
-
-        const audioUrl = sings[menuSongIndex].audio_url;
-
-        try {
-            const response = await fetch(audioUrl, {
-                method: 'GET',
-                headers: {
-                    'Cache-Control': 'no-cache', // Optional: Customize headers if needed
-                },
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Error fetching audio file:", errorText);
-                throw new Error("Không thể tải file.");
-            }
-
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `${audioUrl.split('/').pop() || 'audio.mp3'}`; // Set the file name
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url); // Release the URL
-            handleMenuClose();
-        } catch (error) {
-            addToast({
-                type: "error",
-                title: "Lỗi tải xuống",
-                description: "Không thể tải bài hát, vui lòng thử lại.",
-            });
-        }
-    };
-
-    const handleWrapperClick = (e) => {
-        console.log(e)
-        e.stopPropagation();
-        handleMenuClose(); // Đóng dropdown khi click vào wrapper
-    };
-
-    if (sings.length === 0) {
-        return <div className="container mx-auto p-4">Không có bài hát nào</div>;
-    }
-
     return (
         <div className="relative max-w-[480px] mx-auto mt-[80px] bg-white">
-            {open && (
-                <div
-                    className="fixed inset-0 bg-transparent"
-                    style={{ zIndex: 999 }}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleMenuClose();
-                    }}
-                ></div>
-            )}
-
             <AudioPlayer progressRef={progressRef} />
             {/* Dashboard */}
             <div className="fixed top-[60px] w-full max-w-[480px] bg-white border-b border-gray-200 p-2 z-20">
@@ -677,52 +563,6 @@ const Main = ({ id }) => {
                         <div className="flex-1 px-4">
                             <h3 className="text-lg">{sing.singname}</h3>
                             <p className="text-sm">{sing.author}</p>
-                        </div>
-                        <div className="text-gray-600">
-                            <MoreVert
-                                className={`cursor-pointer ${index === currentIndex ? "text-white" : ""}`}
-                                fontSize="large"
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
-                                    handleMenuOpen(e, index); // Truyền index của bài hát
-                                }}
-                            />
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleMenuClose}
-                                anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                transformOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                PaperProps={{
-                                    style: {
-                                        borderRadius: "8px",
-                                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-                                    },
-                                }}
-                            >
-                                <MenuItem
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
-                                        handleDownload(); // Gọi trực tiếp handleDownload
-                                    }}
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "8px",
-                                        padding: "10px 16px",
-                                        zIndex: 1000,
-                                    }}
-                                >
-                                    <Download fontSize="small" />
-                                    <span>Tải xuống</span>
-                                </MenuItem>
-                            </Menu>
                         </div>
                     </div>
                 ))}
