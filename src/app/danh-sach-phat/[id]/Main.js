@@ -592,7 +592,7 @@ const Main = ({ id }) => {
             {open && (
                 <div
                     className="fixed inset-0 bg-transparent"
-                    style={{ zIndex: 9999 }}
+                    style={{ zIndex: 999 }}
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -716,6 +716,7 @@ const Main = ({ id }) => {
                                         alignItems: "center",
                                         gap: "8px",
                                         padding: "10px 16px",
+                                        zIndex: 1000,
                                     }}
                                 >
                                     <Download fontSize="small" />
