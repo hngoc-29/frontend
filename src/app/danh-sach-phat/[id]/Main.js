@@ -44,16 +44,16 @@ const Main = ({ id }) => {
 
     // Đảm bảo currentIndex được khởi tạo từ URL s tparamrước tiên
     const [isPlaying, setIsPlaying] = useState(globalAudioState.isPlaying);
-    const [isRandom, setIsRandom] = useState(() => {
-        if (typeof window === `undefined`) return false;
-        const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
-        return savedConfig.isRandom === true; // Khôi phục từ localStorage
-    });
-    const [isRepeat, setIsRepeat] = useState(() => {
-        if (typeof window === `undefined`) return false;
-        const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
-        return savedConfig.isRepeat === true; // Khôi phục từ localStorage
-    });
+    const [isRandom, setIsRandom] = useState(false);
+    const [isRepeat, setIsRepeat] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== `undefined`) {
+            const savedConfig = JSON.parse(localStorage.getItem("playerConfig")) || {};
+            setIsRandom(savedConfig.isRandom === true); // Khôi phục từ localStorage
+            setIsRepeat(savedConfig.isRepeat === true); // Khôi phục từ localStorage
+        }
+    }, []);
 
     // Đồng bộ isPlaying với globalAudioState
     useEffect(() => {
