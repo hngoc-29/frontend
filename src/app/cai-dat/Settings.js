@@ -41,6 +41,16 @@ export default function Settings() {
     setModalContent(null);
   };
 
+  useEffect(() => {
+    if (typeof window !== `undefined`) {
+      document.body.style.overflow = `hidden`;
+    }
+    return () => {
+      //document.querySelector(`.tagmain`).style.overflow = `auto`;
+      document.body.style.overflow = `auto`;
+    }
+  })
+
   return (
     <div className="settings-container my-10">
       <h1 className="text-2xl font-bold mb-5">Cài đặt</h1>

@@ -45,7 +45,7 @@ const ListThumbnail = () => {
     }
   }, []);
   return (
-    <div>
+    <div className='overflow-auto'>
       <h1 className='text-3xl font-bold text-center'>Danh sách nhạc</h1>
       <div className='mt-5 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
         {thumbnail.map(item => (

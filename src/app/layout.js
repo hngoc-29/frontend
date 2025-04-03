@@ -65,10 +65,10 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   return (
-    <html lang="vi" className="bg-gray-100 text-gray-900">
+    <html lang="vi" className="bg-gray-100 text-gray-900 h-full">
       <head>
       </head>
-      <body className={`${inter.className} bg-gray-100 text-gray-900`}>
+      <body className={`${inter.className} bg-gray-100 text-gray-900 h-full`}>
         <ToastProvider>
           <GlobalAudioProvider>
             <UserProvider>
@@ -76,9 +76,9 @@ export default async function RootLayout({ children }) {
                 <Loading />
                 <TokenRefresher />
                 <Header />
-                <div className='maindiv py-[60px] bg-gray-100 text-gray-900'>
+                <div className='maindiv py-[60px] bg-gray-100 text-gray-900 min-h-screen'>
                   <ThumbnailProvider>
-                    <main className='overflow-auto  bg-gray-100'>{children}</main>
+                    <main className='overflow-auto bg-gray-100 min-h-screen'>{children}</main>
                   </ThumbnailProvider>
                 </div>
                 <GetPath>
